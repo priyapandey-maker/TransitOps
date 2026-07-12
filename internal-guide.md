@@ -1822,3 +1822,915 @@ The next phase, **Phase 5 – Frontend Architecture**, will focus on:
 * Frontend ↔ Backend integration strategy
 
 This phase will be guided by the **official TransitOps dashboard mockups** you've shared so that the implementation remains visually consistent with the organizers' expectations.
+---
+
+Excellent. This is the last major architecture phase before implementation.
+
+At this point we have already frozen:
+
+* ✅ Business Scope
+* ✅ Database
+* ✅ Backend
+* ✅ UI Reference (Official Mockup)
+
+So the frontend architecture has one job:
+
+> **Translate the backend into a clean, maintainable ERP interface that matches the official TransitOps design.**
+
+Since Priya will primarily work on the frontend, our architecture should allow her to develop independently while you focus on the backend.
+
+---
+
+# Phase 5 – Frontend Architecture
+
+## 1. Frontend Design Principles (Locked)
+
+These principles will guide every React component.
+
+### Simplicity
+
+* No unnecessary abstraction
+* No deeply nested components
+* Keep components readable
+
+---
+
+### Reusability
+
+Build once.
+
+Reuse everywhere.
+
+Examples:
+
+* Button
+* Card
+* Input
+* Badge
+* Table
+* Modal
+* Select
+* Search Bar
+
+---
+
+### Consistency
+
+Every CRUD page should feel identical.
+
+Example:
+
+```text
+Header
+
+↓
+
+Search
+
+↓
+
+Filters
+
+↓
+
+Primary Button
+
+↓
+
+Table
+
+↓
+
+Pagination
+```
+
+This is exactly how ERP systems are designed.
+
+---
+
+### Separation of Concerns
+
+Pages
+
+↓
+
+Components
+
+↓
+
+Hooks
+
+↓
+
+API Layer
+
+↓
+
+Backend
+
+Never mix API calls directly into UI components.
+
+---
+
+# 2. Final Frontend Folder Structure
+
+```text
+client/
+│
+├── src/
+│
+├── assets/
+│
+├── components/
+│   ├── common/
+│   ├── forms/
+│   ├── layout/
+│   ├── tables/
+│   ├── charts/
+│   ├── feedback/
+│   └── ui/
+│
+├── features/
+│   ├── auth/
+│   ├── dashboard/
+│   ├── vehicles/
+│   ├── drivers/
+│   ├── trips/
+│   ├── maintenance/
+│   ├── fuel/
+│   ├── expenses/
+│   ├── analytics/
+│   └── settings/
+│
+├── hooks/
+│
+├── layouts/
+│
+├── pages/
+│
+├── routes/
+│
+├── services/
+│
+├── types/
+│
+├── utils/
+│
+├── constants/
+│
+├── context/
+│
+├── styles/
+│
+├── App.tsx
+│
+└── main.tsx
+```
+
+This structure mirrors the backend modules, making the project easier to navigate.
+
+---
+
+# 3. Routing Architecture
+
+```text
+/
+
+↓
+
+Login
+
+↓
+
+Dashboard Layout
+
+├── Dashboard
+
+├── Fleet
+
+├── Drivers
+
+├── Trips
+
+├── Maintenance
+
+├── Fuel & Expenses
+
+├── Analytics
+
+└── Settings
+```
+
+One layout.
+
+Multiple pages.
+
+Exactly like the official mockup.
+
+---
+
+# 4. Layout Hierarchy
+
+```text
+<App>
+
+↓
+
+<AuthProvider>
+
+↓
+
+<Router>
+
+↓
+
+<ProtectedRoute>
+
+↓
+
+<DashboardLayout>
+
+├── Sidebar
+
+├── Header
+
+└── Page
+```
+
+This keeps authentication, navigation, and page rendering clearly separated.
+
+---
+
+# 5. Component Hierarchy
+
+## Layout Components
+
+```text
+Sidebar
+
+TopBar
+
+DashboardLayout
+
+Breadcrumb
+```
+
+---
+
+## Common Components
+
+```text
+Button
+
+Input
+
+Select
+
+Badge
+
+Modal
+
+Card
+
+Loader
+
+EmptyState
+
+Pagination
+
+SearchBar
+
+ConfirmDialog
+```
+
+---
+
+## Table Components
+
+```text
+DataTable
+
+TableHeader
+
+TableRow
+
+StatusBadge
+
+ActionMenu
+```
+
+---
+
+## Form Components
+
+```text
+VehicleForm
+
+DriverForm
+
+TripForm
+
+MaintenanceForm
+
+FuelForm
+
+ExpenseForm
+```
+
+Each form uses:
+
+* React Hook Form
+* Zod validation
+
+---
+
+## Chart Components
+
+```text
+KPI Cards
+
+Bar Chart
+
+Pie Chart
+```
+
+Only the charts required by the official dashboard.
+
+---
+
+# 6. Page Structure
+
+Every module follows the same template.
+
+Example:
+
+```text
+Vehicles
+
+↓
+
+Page
+
+↓
+
+Toolbar
+
+↓
+
+Filters
+
+↓
+
+Search
+
+↓
+
+Add Button
+
+↓
+
+Table
+
+↓
+
+Pagination
+
+↓
+
+Modal
+```
+
+This consistency improves usability and speeds development.
+
+---
+
+# 7. State Management
+
+We intentionally avoid introducing Redux or other global state libraries.
+
+## Local State
+
+Use React state for:
+
+* Form inputs
+* Modals
+* Table filters
+
+---
+
+## Context
+
+Use React Context only for:
+
+* Authentication
+* Theme
+
+Nothing else.
+
+---
+
+## Server State
+
+We'll use Axios with custom hooks (or lightweight fetch patterns) for data retrieval and updates. Given the 8-hour constraint, adding React Query would introduce additional learning and setup overhead without a proportionate benefit.
+
+---
+
+# 8. API Layer
+
+Every feature has its own service.
+
+```text
+services/
+
+auth.api.ts
+
+vehicle.api.ts
+
+driver.api.ts
+
+trip.api.ts
+
+maintenance.api.ts
+
+fuel.api.ts
+
+expense.api.ts
+
+analytics.api.ts
+```
+
+Pages never call Axios directly.
+
+Instead:
+
+```text
+Page
+
+↓
+
+Feature Hook
+
+↓
+
+API Service
+
+↓
+
+Backend
+```
+
+This isolates networking logic from presentation.
+
+---
+
+# 9. Theme System
+
+We already have the official designs.
+
+We'll support:
+
+```text
+Light
+
+↓
+
+Dark
+```
+
+Using:
+
+Tailwind CSS
+
+↓
+
+dark class
+
+↓
+
+Reusable components
+
+One component system.
+
+Two themes.
+
+No duplicated UI.
+
+---
+
+# 10. UI Design System
+
+## Colors
+
+Use the official mockups as the source of truth.
+
+Avoid adding gradients or trendy effects.
+
+---
+
+## Cards
+
+Consistent padding.
+
+Rounded corners.
+
+Minimal shadows.
+
+---
+
+## Tables
+
+ERP style.
+
+* Clear headers
+* Status badges
+* Row actions
+* Hover states
+
+---
+
+## Buttons
+
+Two variants only:
+
+Primary
+
+Secondary
+
+Avoid introducing multiple styles that complicate consistency.
+
+---
+
+## Status Badges
+
+Consistent colors across the app.
+
+Example:
+
+```text
+Available
+
+Green
+
+────────────
+
+On Trip
+
+Blue
+
+────────────
+
+In Shop
+
+Orange
+
+────────────
+
+Retired
+
+Gray
+```
+
+Users should immediately understand entity states.
+
+---
+
+# 11. Responsive Strategy
+
+Desktop-first.
+
+Then tablet.
+
+Then mobile.
+
+Sidebar behavior:
+
+Desktop
+
+Fixed
+
+↓
+
+Tablet
+
+Collapsible
+
+↓
+
+Mobile
+
+Drawer
+
+This matches common ERP usability patterns.
+
+---
+
+# 12. Frontend Error Handling
+
+Every page follows the same states:
+
+```text
+Loading
+
+↓
+
+Success
+
+↓
+
+Empty
+
+↓
+
+Error
+```
+
+No page should remain blank if data fails to load.
+
+---
+
+# 13. Frontend ↔ Backend Contract
+
+Every module maps directly:
+
+| Frontend Feature | Backend API        | Database           |
+| ---------------- | ------------------ | ------------------ |
+| Vehicles         | `/api/vehicles`    | `vehicles`         |
+| Drivers          | `/api/drivers`     | `drivers`          |
+| Trips            | `/api/trips`       | `trips`            |
+| Maintenance      | `/api/maintenance` | `maintenance_logs` |
+| Fuel             | `/api/fuel`        | `fuel_logs`        |
+| Expenses         | `/api/expenses`    | `expenses`         |
+| Dashboard        | `/api/dashboard`   | Multiple tables    |
+| Analytics        | `/api/analytics`   | Aggregated queries |
+
+This one-to-one mapping reduces integration complexity.
+
+---
+
+# 14. Component Reuse Strategy
+
+To minimize duplication, we'll reuse core components across modules:
+
+| Component     | Used In                                               |
+| ------------- | ----------------------------------------------------- |
+| DataTable     | Vehicles, Drivers, Trips, Maintenance, Fuel, Expenses |
+| SearchBar     | All list pages                                        |
+| StatusBadge   | Every entity with a lifecycle state                   |
+| Modal         | Create/Edit forms                                     |
+| ConfirmDialog | Delete/Cancel actions                                 |
+| Card          | Dashboard KPIs and analytics                          |
+| Loader        | All async pages                                       |
+| EmptyState    | Empty tables and reports                              |
+
+This keeps the UI consistent and reduces development effort.
+
+---
+
+# Frontend Architecture Review
+
+For a two-person, 8-hour hackathon, I believe this architecture strikes the right balance:
+
+* It mirrors the backend, making integration straightforward.
+* It stays faithful to the official UI mockups.
+* It emphasizes reusable components over page-specific implementations.
+* It avoids unnecessary dependencies while maintaining clean separation of concerns.
+* It provides a professional ERP experience without introducing avoidable complexity.
+
+---
+
+# Phase 5 Deliverables (Completed)
+
+We have now locked:
+
+* ✅ Frontend folder structure
+* ✅ Routing architecture
+* ✅ Layout hierarchy
+* ✅ Component hierarchy
+* ✅ Design system
+* ✅ Theme strategy
+* ✅ State management approach
+* ✅ API integration strategy
+* ✅ Responsive behavior
+* ✅ Frontend ↔ Backend contract
+* ✅ Component reuse strategy
+
+## One Recommendation Before Phase 6
+
+I recommend adding one lightweight architectural improvement:
+
+Create a **shared TypeScript `types/` layer** containing interfaces for all API request and response models (e.g., `Vehicle`, `Driver`, `Trip`, `ApiResponse<T>`). Both pages and API services will consume these shared types, ensuring compile-time consistency across the frontend and reducing bugs caused by mismatched data shapes.
+
+I **do not** recommend introducing code generation from OpenAPI, schema-driven UI generation, or large state-management frameworks. A shared `types/` layer provides the biggest quality improvement for the least complexity and fits perfectly within our hackathon constraints.
+---
+Agreed. This is the **last architectural refinement** I would recommend before implementation begins.
+
+I would **not** add React Query, Redux Toolkit, Zustand, OpenAPI generators, or automatic SDK generation. Those are excellent tools, but for an **8-hour Odoo hackathon**, they add complexity without a proportional increase in judging score.
+
+---
+
+# Frontend Architecture v1.1 (Final & Locked)
+
+## Shared Type System
+
+We'll create a centralized `types/` directory.
+
+```text
+client/
+└── src/
+    └── types/
+        ├── api.types.ts
+        ├── auth.types.ts
+        ├── vehicle.types.ts
+        ├── driver.types.ts
+        ├── trip.types.ts
+        ├── maintenance.types.ts
+        ├── fuel.types.ts
+        ├── expense.types.ts
+        ├── analytics.types.ts
+        └── common.types.ts
+```
+
+---
+
+# Example Structure
+
+## `common.types.ts`
+
+Contains reusable types.
+
+Examples:
+
+* Pagination
+* Status
+* Dropdown Option
+* Table Column
+
+---
+
+## `api.types.ts`
+
+Every API returns the same structure.
+
+```ts
+export interface ApiResponse<T> {
+    success: boolean;
+    message: string;
+    data: T;
+}
+
+export interface ApiError {
+    success: false;
+    message: string;
+    errors?: ValidationError[];
+}
+```
+
+This matches our locked backend response helper.
+
+---
+
+## `vehicle.types.ts`
+
+Defines:
+
+* Vehicle
+* CreateVehicleRequest
+* UpdateVehicleRequest
+* VehicleStatus
+
+The same pattern applies to Drivers, Trips, Maintenance, Fuel, Expenses, and Analytics.
+
+---
+
+# Benefits
+
+## Compile-Time Safety
+
+If the backend response changes, TypeScript immediately highlights affected code during development.
+
+---
+
+## Cleaner Components
+
+Instead of inline object shapes, components use named interfaces.
+
+Example:
+
+```ts
+const vehicle: Vehicle
+```
+
+instead of
+
+```ts
+const vehicle: {
+   ...
+}
+```
+
+This improves readability and maintainability.
+
+---
+
+## Easier API Integration
+
+Services and pages share the same contracts, reducing duplication and mismatched assumptions.
+
+---
+
+## Better Collaboration
+
+With two developers working in parallel:
+
+* Backend knows exactly what shape to return.
+* Frontend knows exactly what shape to consume.
+
+This minimizes integration issues.
+
+---
+
+# Architecture Freeze (Current Status)
+
+We have now completed and frozen **all major architecture phases**.
+
+## ✅ Phase 0
+
+Project Understanding
+
+## ✅ Phase 1
+
+Business Analysis
+
+## ✅ Phase 2
+
+Solution Design
+
+## ✅ Phase 3
+
+Database Design
+
+## ✅ Phase 4
+
+Backend Architecture
+
+## ✅ Phase 5
+
+Frontend Architecture
+
+---
+
+# My Assessment
+
+At this point, the project has a complete engineering blueprint:
+
+### Business
+
+* Clearly defined scope
+* Realistic feature prioritization
+* Two-person execution plan
+
+### Database
+
+* 10 normalized MySQL tables
+* Strong relationships
+* Business-rule support
+* Auditability
+
+### Backend
+
+* Layered Modular MVC
+* JWT Authentication
+* RBAC
+* Transaction handling
+* Repository pattern
+* Standardized API responses
+
+### Frontend
+
+* Feature-based structure
+* Reusable component library
+* Official mockup-aligned layout
+* Shared TypeScript contracts
+* Light/Dark theme support
+* Consistent CRUD experience
+
+---
+
+## One Observation Before We Continue
+
+Looking back over all five phases, I see **one recurring challenge** that often causes hackathon teams to lose time: frontend, backend, and database drifting out of sync during implementation.
+
+Rather than jumping straight to coding, I recommend spending the next phase on **Phase 6 – Feature Contract**, where we create a definitive mapping between:
+
+* **Database Table**
+* **Backend Endpoint**
+* **Frontend Page**
+* **Validation Rules**
+* **Business Rules**
+* **Role Permissions**
+
+This becomes the **single source of truth** for both you and Priya. If a feature doesn't exist in all three layers, it's considered incomplete.
+
+Given your emphasis on engineering quality and avoiding integration surprises, I believe this phase will provide one of the highest returns on investment before implementation begins.
+---
+
