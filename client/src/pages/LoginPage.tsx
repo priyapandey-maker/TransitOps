@@ -16,6 +16,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<'Admin' | 'Fleet Manager' | 'Dispatcher' | 'Financial Analyst'>('Admin');
   const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -39,7 +40,13 @@ export default function LoginPage() {
       const response = await loginService(data);
       if (response.success && response.data) {
         const { token, user } = response.data;
-        login(token, user);
+        // Apply selected role to logged in user profile details
+        const overriddenUser = {
+          ...user,
+          role: selectedRole,
+          fullName: `${selectedRole} Officer`,
+        };
+        login(token, overriddenUser);
         navigate('/dashboard');
       } else {
         setApiError(response.message || 'Login failed. Please check your credentials.');
@@ -186,6 +193,32 @@ export default function LoginPage() {
                 {errors.password && (
                   <p className="text-xs text-red-500 mt-1.5">{errors.password.message}</p>
                 )}
+              </div>
+
+              {/* Role select field */}
+              <div>
+                <label htmlFor="role" className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                  Access Role
+                </label>
+                <select
+                  id="role"
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.target.value as typeof selectedRole)}
+                  className="
+                    w-full px-3.5 py-2.5 text-sm rounded-inputs
+                    bg-slate-50 dark:bg-slate-950
+                    text-slate-900 dark:text-slate-100
+                    border border-slate-200/80 dark:border-slate-800
+                    focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500
+                    transition-saas
+                  "
+                  disabled={loading}
+                >
+                  <option value="Admin">Admin</option>
+                  <option value="Fleet Manager">Fleet Manager</option>
+                  <option value="Dispatcher">Dispatcher</option>
+                  <option value="Financial Analyst">Financial Analyst</option>
+                </select>
               </div>
 
               {/* Remember Me Option */}
