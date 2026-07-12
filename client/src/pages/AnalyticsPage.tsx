@@ -7,15 +7,19 @@ import {
   Lightbulb,
   CheckCircle2,
   Truck,
-  Wrench
+  Wrench,
+  Download
 } from 'lucide-react';
 import { getAnalyticsReport } from '../services/analytics.api';
 import type { AnalyticsReport } from '../services/analytics.api';
 import DataTable from '../components/tables/DataTable';
 import type { Column } from '../components/tables/DataTable';
 import Loader from '../components/common/Loader';
+import { useAuth } from '../context/AuthContext';
+import { exportToPdf } from '../utils/pdfExport';
 
 export default function AnalyticsPage() {
+  const { userRole } = useAuth();
   const [data, setData] = useState<AnalyticsReport | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -133,14 +137,54 @@ export default function AnalyticsPage() {
   // Calculate maximum monthly cost to scale the bars relatively
   const maxMonthCost = Math.max(...data.monthly_costs.map(m => m.spend)) || 1;
 
+  const handleExportPDF = () => {
+    if (!data) return;
+    const kpis = [
+      { label: 'Fleet Utilization', value: `${data.fleet_utilization}%` },
+      { label: 'Monthly Cost Index', value: `₹${data.operational_cost.toLocaleString()}` },
+      { label: 'Fuel Efficiency', value: `${data.fuel_efficiency} km/L` },
+      { label: 'Average Vehicle ROI', value: `${data.average_roi}%` },
+    ];
+    const headers = ['Vehicle Name Model', 'Registration', 'Asset Type', 'Trips Count', 'Net Revenue', 'Net ROI Score'];
+    const rows = data.top_vehicles.map((v) => [
+      v.vehicle_name,
+      v.registration_number,
+      v.vehicle_type,
+      v.trips_completed.toString(),
+      `₹${v.total_revenue.toLocaleString()}`,
+      `${v.net_roi}% ROI`,
+    ]);
+
+    exportToPdf({
+      title: 'Business Intelligence Report',
+      role: userRole ?? 'Admin',
+      kpis,
+      headers,
+      rows,
+    });
+  };
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto text-left">
       {/* Title Block */}
-      <div className="flex flex-col gap-1">
-        <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Business Intelligence</h1>
-        <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">
-          Analytics dashboard for tracking fleet capital ROI, fuel efficiency margins, and monthly operational spend.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Business Intelligence</h1>
+          <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">
+            Analytics dashboard for tracking fleet capital ROI, fuel efficiency margins, and monthly operational spend.
+          </p>
+        </div>
+        <button
+          onClick={handleExportPDF}
+          className="
+            flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-buttons
+            text-slate-700 bg-white hover:bg-slate-50 dark:text-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800
+            border border-slate-205 dark:border-slate-800 transition-saas btn-press self-start sm:self-auto
+          "
+        >
+          <Download size={14} />
+          <span>Export Report</span>
+        </button>
       </div>
 
       {/* KPI Cards */}

@@ -14,10 +14,12 @@ import {
   Wrench,
   Route,
   Clock,
-  DollarSign
+  DollarSign,
+  Download
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { exportToPdf } from '../utils/pdfExport';
 
 // Define setting tabs per role
 interface TabConfig {
@@ -100,14 +102,54 @@ export default function SettingsPage() {
     { module: 'Fuel & Cost Sheets', admin: 'Full', fleetManager: 'Full', dispatcher: 'Read', finance: 'Full' },
   ];
 
+  const handleExportPDF = () => {
+    const kpis = [
+      { label: 'Role Context', value: role },
+      { label: 'System Theme', value: theme === 'dark' ? 'Dark Mode' : 'Light Mode' },
+      { label: 'Registrations', value: '27AAAAA1111A1Z1' },
+      { label: 'Modules Configured', value: rbacRules.length.toString() },
+    ];
+    const headers = ['System Module Reference', 'Admin Permission', 'Manager Permission', 'Dispatcher Role', 'Finance Role'];
+    const rows = rbacRules.map((rule) => [
+      rule.module,
+      rule.admin,
+      rule.fleetManager,
+      rule.dispatcher,
+      rule.finance,
+    ]);
+
+    exportToPdf({
+      title: 'Configuration Summary Report',
+      role,
+      kpis,
+      headers,
+      rows,
+    });
+  };
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto text-left">
       {/* Title */}
-      <div className="flex flex-col gap-1">
-        <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Role-Aware Settings</h1>
-        <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">
-          Personalized configuration console for authenticated role: <strong className="text-slate-805 dark:text-slate-200">{role}</strong>.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Role-Aware Settings</h1>
+          <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">
+            Personalized configuration console for authenticated role: <strong className="text-slate-805 dark:text-slate-200">{role}</strong>.
+          </p>
+        </div>
+        {role === 'Admin' && (
+          <button
+            onClick={handleExportPDF}
+            className="
+              flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-buttons
+              text-slate-700 bg-white hover:bg-slate-50 dark:text-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800
+              border border-slate-205 dark:border-slate-800 transition-saas btn-press self-start sm:self-auto
+            "
+          >
+            <Download size={14} />
+            <span>Export Configuration</span>
+          </button>
+        )}
       </div>
 
       {/* Save Alert */}

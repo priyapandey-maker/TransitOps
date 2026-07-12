@@ -8,7 +8,8 @@ import {
   FileText,
   Wrench,
   Eye,
-  Edit
+  Edit,
+  Download
 } from 'lucide-react';
 import {
   getFuelLogs,
@@ -20,6 +21,7 @@ import {
 } from '../services/fuelExpense.api';
 import type { FuelLog, FuelFormData } from '../types/fuel.types';
 import type { Expense, ExpenseFormData } from '../types/expense.types';
+import { exportToPdf } from '../utils/pdfExport';
 import DataTable from '../components/tables/DataTable';
 import type { Column } from '../components/tables/DataTable';
 import SearchBar from '../components/common/SearchBar';
@@ -380,6 +382,45 @@ export default function FuelExpensesPage() {
     { label: 'Miscellaneous Office', value: expenses.filter(e => e.category === 'Misc').reduce((sum, e) => sum + e.amount, 0), max: totalExpenseCost, color: 'bg-slate-400' },
   ];
 
+  const handleExportPDF = () => {
+    const kpis = [
+      { label: 'Total Expense Cost', value: `₹${totalExpenseCost.toLocaleString()}` },
+      { label: 'Total Fuel Cost', value: `₹${totalFuelCost.toLocaleString()}` },
+      { label: 'Cost Per Kilometer', value: `₹${costPerKm}` },
+      { label: 'Average Mileage', value: `${avgMileage} km/L` },
+    ];
+    let headers: string[];
+    let rows: string[][];
+
+    if (activeTab === 'fuel') {
+      headers = ['Vehicle Model Name', 'Volume (L)', 'Refuel Cost', 'Cost/Liter', 'Date Refueled'];
+      rows = fuelLogs.map((l) => [
+        l.vehicle_name || `Asset #${l.vehicle_id}`,
+        `${l.liters} L`,
+        `₹${l.cost.toLocaleString()}`,
+        `₹${(l.cost / l.liters).toFixed(1)}/L`,
+        l.date,
+      ]);
+    } else {
+      headers = ['Category', 'Vehicle Assigned', 'Amount Spent', 'Logged Date', 'Description'];
+      rows = expenses.map((e) => [
+        e.category,
+        e.vehicle_name || 'Corporate/Admin',
+        `₹${e.amount.toLocaleString()}`,
+        e.date,
+        e.description || 'No details',
+      ]);
+    }
+
+    exportToPdf({
+      title: activeTab === 'fuel' ? 'Fuel Telemetry Report' : 'Expense Registry Report',
+      role: userRole ?? 'Admin',
+      kpis,
+      headers,
+      rows,
+    });
+  };
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto text-left">
       {/* Title section */}
@@ -390,19 +431,32 @@ export default function FuelExpensesPage() {
             Monitor overall operational cost indices, calculate fuel efficiencies, and review budget spending.
           </p>
         </div>
-        {canModify && (
+        <div className="flex items-center gap-2">
           <button
-            onClick={openCreateModal}
+            onClick={handleExportPDF}
             className="
-              flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-buttons text-white
-              bg-primary-500 hover:bg-primary-600 active:bg-primary-700 shadow-sm shadow-primary-500/10
-              transition-saas btn-press
+              flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-buttons
+              text-slate-700 bg-white hover:bg-slate-50 dark:text-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800
+              border border-slate-205 dark:border-slate-800 transition-saas btn-press
             "
           >
-            <Plus size={16} />
-            {activeTab === 'fuel' ? 'Add Fuel Log' : 'Log Expense'}
+            <Download size={14} />
+            <span>Export Report</span>
           </button>
-        )}
+          {canModify && (
+            <button
+              onClick={openCreateModal}
+              className="
+                flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-buttons text-white
+                bg-primary-500 hover:bg-primary-600 active:bg-primary-700 shadow-sm shadow-primary-500/10
+                transition-saas btn-press
+              "
+            >
+              <Plus size={16} />
+              {activeTab === 'fuel' ? 'Add Fuel Log' : 'Log Expense'}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* KPI Cards */}

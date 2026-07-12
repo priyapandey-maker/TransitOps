@@ -23,7 +23,8 @@ import {
   QuickActionsCard,
 } from '../components/dashboard/DashboardWidgets';
 import type { MetricCardProps } from '../components/dashboard/DashboardWidgets';
-import { Truck, BarChart3, Route, Clock, Wrench, Fuel } from 'lucide-react';
+import { Truck, BarChart3, Route, Clock, Wrench, Fuel, Download } from 'lucide-react';
+import { exportToPdf } from '../utils/pdfExport';
 
 /* ── Import role‑specific data ───────────────────────── */
 import {
@@ -253,6 +254,28 @@ export default function DashboardPage() {
   const header = dashboardHeaders[role] ?? defaultHeader;
   const DashboardContent = DASHBOARD_MAP[role] ?? AdminDashboard;
 
+  const handleExportPDF = () => {
+    const activeMetricsMap: Record<Role, Omit<MetricCardProps, never>[]> = {
+      'Admin': adminMetrics,
+      'Fleet Manager': fleetMetrics,
+      'Dispatcher': dispatcherMetrics,
+      'Financial Analyst': financeMetrics,
+      'Safety Officer': adminMetrics,
+    };
+    const currentMetrics = activeMetricsMap[role] || adminMetrics;
+    const kpis = currentMetrics.map((m) => ({ label: m.label, value: m.value }));
+    const headers = ['Metric Label Indicator', 'Current Value Metrics', 'Details Status'];
+    const rows = currentMetrics.map((m) => [m.label, m.value, m.subtitle]);
+
+    exportToPdf({
+      title: `${header.title} Summary`,
+      role,
+      kpis,
+      headers,
+      rows,
+    });
+  };
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto text-left">
       {/* Role‑specific header */}
@@ -265,7 +288,20 @@ export default function DashboardPage() {
             {header.subtitle}
           </p>
         </div>
-        <StatusBadge label={header.statusLabel} severity={header.statusSeverity} />
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleExportPDF}
+            className="
+              flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-buttons
+              text-slate-700 bg-white hover:bg-slate-55 dark:text-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800
+              border border-slate-205 dark:border-slate-800 transition-saas btn-press
+            "
+          >
+            <Download size={14} />
+            <span>Export Summary</span>
+          </button>
+          <StatusBadge label={header.statusLabel} severity={header.statusSeverity} />
+        </div>
       </div>
 
       {/* Role‑specific content */}

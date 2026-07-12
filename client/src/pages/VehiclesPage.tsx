@@ -10,7 +10,8 @@ import {
   TrendingUp,
   Eye,
   Edit,
-  Trash2
+  Trash2,
+  Download
 } from 'lucide-react';
 import { getVehicles, createVehicle, updateVehicle, deleteVehicle } from '../services/vehicle.api';
 import type { Vehicle, VehicleFormData } from '../types/vehicle.types';
@@ -18,6 +19,7 @@ import DataTable from '../components/tables/DataTable';
 import type { Column } from '../components/tables/DataTable';
 import StatusBadge from '../components/tables/StatusBadge';
 import SearchBar from '../components/common/SearchBar';
+import { exportToPdf } from '../utils/pdfExport';
 import Pagination from '../components/common/Pagination';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
@@ -326,6 +328,32 @@ export default function VehiclesPage() {
     currentPage * itemsPerPage
   );
 
+  const handleExportPDF = () => {
+    const kpis = [
+      { label: 'Vehicle Health', value: `${avgHealth}%` },
+      { label: 'RC Valid Status', value: regValue },
+      { label: 'Insurance Expiry', value: insValue },
+      { label: 'Fleet Utilization', value: `${utilPercent}%` },
+    ];
+    const headers = ['Vehicle Model Name', 'Reg Number', 'Asset Class', 'Odometer (KM)', 'Telemetry Index', 'Current Status'];
+    const rows = filteredVehicles.map((v) => [
+      v.vehicle_name,
+      v.registration_number,
+      v.vehicle_type,
+      v.odometer.toLocaleString() + ' km',
+      `${v.status === 'In Shop' ? 60 : v.odometer > 40000 ? 85 : 98}% Health`,
+      v.status,
+    ]);
+
+    exportToPdf({
+      title: 'Fleet Registry Report',
+      role: userRole ?? 'Admin',
+      kpis,
+      headers,
+      rows,
+    });
+  };
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto text-left">
       {/* Title block */}
@@ -336,19 +364,32 @@ export default function VehiclesPage() {
             Centralized registry matrix for supervising transport vehicles, insurance policies, and RC renewals.
           </p>
         </div>
-        {canModify && (
+        <div className="flex items-center gap-2">
           <button
-            onClick={openCreateModal}
+            onClick={handleExportPDF}
             className="
-              flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-buttons text-white
-              bg-primary-500 hover:bg-primary-600 active:bg-primary-700 shadow-sm shadow-primary-500/10
-              transition-saas btn-press
+              flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-buttons
+              text-slate-700 bg-white hover:bg-slate-50 dark:text-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800
+              border border-slate-200 dark:border-slate-800 transition-saas btn-press
             "
           >
-            <Plus size={16} />
-            Register Vehicle
+            <Download size={14} />
+            <span>Export Registry</span>
           </button>
-        )}
+          {canModify && (
+            <button
+              onClick={openCreateModal}
+              className="
+                flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-buttons text-white
+                bg-primary-500 hover:bg-primary-600 active:bg-primary-700 shadow-sm shadow-primary-500/10
+                transition-saas btn-press
+              "
+            >
+              <Plus size={16} />
+              Register Vehicle
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Fleet Summary Cards */}

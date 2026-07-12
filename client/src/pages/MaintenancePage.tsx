@@ -8,10 +8,12 @@ import {
   Wrench,
   AlertTriangle,
   DollarSign,
-  Clock
+  Clock,
+  Download
 } from 'lucide-react';
 import { getMaintenances, createMaintenance, updateMaintenance, closeMaintenance } from '../services/maintenance.api';
 import type { Maintenance, MaintenanceFormData } from '../types/maintenance.types';
+import { exportToPdf } from '../utils/pdfExport';
 import DataTable from '../components/tables/DataTable';
 import type { Column } from '../components/tables/DataTable';
 import StatusBadge from '../components/tables/StatusBadge';
@@ -321,6 +323,32 @@ export default function MaintenancePage() {
     currentPage * itemsPerPage
   );
 
+  const handleExportPDF = () => {
+    const kpis = [
+      { label: 'Active Repairs', value: activeWorkshopCount.toString() },
+      { label: 'Emergency Spikes', value: priorityRepairsCount.toString() },
+      { label: 'Cumulative Costs', value: `₹${totalCost.toLocaleString()}` },
+      { label: 'Upcoming Services', value: scheduledCount.toString() },
+    ];
+    const headers = ['WO ID', 'Work Order Type', 'Vehicle Ref', 'Mechanic / Contact', 'Service Cost', 'Status'];
+    const rows = maintenances.map((m) => [
+      `#WO-${m.id}`,
+      m.maintenance_type,
+      m.registration_number || 'UNKNOWN',
+      m.assigned_technician || 'UNASSIGNED',
+      `₹${m.cost.toLocaleString()}`,
+      m.status,
+    ]);
+
+    exportToPdf({
+      title: 'Maintenance Operations Report',
+      role: userRole ?? 'Admin',
+      kpis,
+      headers,
+      rows,
+    });
+  };
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto text-left">
       {/* Header section */}
@@ -331,19 +359,32 @@ export default function MaintenancePage() {
             Schedule preventive inspections, coordinate workshop tickets, and audit completed service logs.
           </p>
         </div>
-        {canModify && (
+        <div className="flex items-center gap-2">
           <button
-            onClick={openCreateModal}
+            onClick={handleExportPDF}
             className="
-              flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-buttons text-white
-              bg-primary-500 hover:bg-primary-600 active:bg-primary-700 shadow-sm shadow-primary-500/10
-              transition-saas btn-press
+              flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-buttons
+              text-slate-700 bg-white hover:bg-slate-50 dark:text-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800
+              border border-slate-205 dark:border-slate-800 transition-saas btn-press
             "
           >
-            <Plus size={16} />
-            Schedule Service
+            <Download size={14} />
+            <span>Export Report</span>
           </button>
-        )}
+          {canModify && (
+            <button
+              onClick={openCreateModal}
+              className="
+                flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-buttons text-white
+                bg-primary-500 hover:bg-primary-600 active:bg-primary-700 shadow-sm shadow-primary-500/10
+                transition-saas btn-press
+              "
+            >
+              <Plus size={16} />
+              Schedule Service
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Summary KPI section */}

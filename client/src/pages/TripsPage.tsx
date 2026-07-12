@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Plus, Edit, Eye, ArrowRight, Play, CheckCircle, Ban } from 'lucide-react';
+import { Plus, Edit, Eye, ArrowRight, Play, CheckCircle, Ban, Download } from 'lucide-react';
 import { getTrips, createTrip, updateTrip, dispatchTrip, completeTrip, cancelTrip } from '../services/trip.api';
 import type { Trip, TripFormData } from '../types/trip.types';
 import DataTable from '../components/tables/DataTable';
 import type { Column } from '../components/tables/DataTable';
 import StatusBadge from '../components/tables/StatusBadge';
 import SearchBar from '../components/common/SearchBar';
+import { exportToPdf } from '../utils/pdfExport';
 import Pagination from '../components/common/Pagination';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
@@ -228,6 +229,32 @@ export default function TripsPage() {
     currentPage * itemsPerPage
   );
 
+  const handleExportPDF = () => {
+    const activeCount = trips.filter(t => t.status === 'Dispatched').length;
+    const completedCount = trips.filter(t => t.status === 'Completed').length;
+    const kpis = [
+      { label: 'Active Trips', value: activeCount.toString() },
+      { label: 'Completed Deliveries', value: completedCount.toString() },
+      { label: 'Total Logs', value: trips.length.toString() }
+    ];
+    const headers = ['Trip Ticket ID', 'Route Path', 'Vehicle Plate', 'Driver Operator', 'Current Status'];
+    const rows = trips.map((t) => [
+      `#TR-${t.id}`,
+      `${t.source} to ${t.destination}`,
+      t.registration_number || 'UNKNOWN',
+      t.driver_name || 'UNASSIGNED',
+      t.status,
+    ]);
+
+    exportToPdf({
+      title: 'Dispatch Operations Report',
+      role: userRole ?? 'Admin',
+      kpis,
+      headers,
+      rows,
+    });
+  };
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto text-left">
       {/* Header */}
@@ -238,19 +265,32 @@ export default function TripsPage() {
             Dispatch, route tracking, and lifecycle workflow management
           </p>
         </div>
-        {canModify && (
+        <div className="flex items-center gap-2">
           <button
-            onClick={openCreateModal}
+            onClick={handleExportPDF}
             className="
-              flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-buttons text-white
-              bg-primary-500 hover:bg-primary-600 active:bg-primary-700 shadow-sm shadow-primary-500/10
-              transition-saas btn-press
+              flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-buttons
+              text-slate-700 bg-white hover:bg-slate-50 dark:text-slate-300 dark:bg-slate-900 dark:hover:bg-slate-800
+              border border-slate-205 dark:border-slate-800 transition-saas btn-press
             "
           >
-            <Plus size={16} />
-            Create Trip
+            <Download size={14} />
+            <span>Export Report</span>
           </button>
-        )}
+          {canModify && (
+            <button
+              onClick={openCreateModal}
+              className="
+                flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold rounded-buttons text-white
+                bg-primary-500 hover:bg-primary-600 active:bg-primary-700 shadow-sm shadow-primary-500/10
+                transition-saas btn-press
+              "
+            >
+              <Plus size={16} />
+              Create Trip
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Filters */}
