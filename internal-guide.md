@@ -982,3 +982,228 @@ There is one enhancement I'd recommend, and only one: add a `trip_status_history
 
 If you agree, we'll include it. Otherwise, we'll keep the schema exactly as above and proceed to **Phase 4 – Backend Architecture**.
 
+---
+Agreed. I think this is the right balance.
+
+I **would not add any more tables** beyond this. Adding dispatch queues, vehicle documents, notifications, or separate analytics tables would be over-engineering for an 8-hour hackathon. The schema should remain lean and focused.
+
+---
+
+# Database Schema v1.1 (Final & Locked)
+
+## Core Tables
+
+| #  | Table                 | Purpose                       |
+| -- | --------------------- | ----------------------------- |
+| 1  | `roles`               | RBAC roles                    |
+| 2  | `users`               | Authentication & system users |
+| 3  | `vehicles`            | Fleet master                  |
+| 4  | `drivers`             | Driver master                 |
+| 5  | `trips`               | Core business transaction     |
+| 6  | `maintenance_logs`    | Vehicle maintenance history   |
+| 7  | `fuel_logs`           | Fuel records                  |
+| 8  | `expenses`            | Operational expenses          |
+| 9  | `activity_logs`       | ERP audit trail               |
+| 10 | `trip_status_history` | Trip lifecycle history        |
+
+**Total: 10 tables**
+
+This is an ideal size for a two-person team.
+
+---
+
+# New Table — `trip_status_history`
+
+## Purpose
+
+The `trips` table stores the **current state**, while `trip_status_history` stores **every state transition**.
+
+Example:
+
+```text
+Trip #12
+
+Draft
+↓
+
+Dispatched
+↓
+
+Completed
+```
+
+Instead of losing history, we preserve it.
+
+---
+
+## Table Structure
+
+| Column          | Type                                          | Constraints               |
+| --------------- | --------------------------------------------- | ------------------------- |
+| id              | INT                                           | PK                        |
+| trip_id         | INT                                           | FK → trips.id             |
+| previous_status | ENUM(Draft, Dispatched, Completed, Cancelled) | NOT NULL                  |
+| new_status      | ENUM(Draft, Dispatched, Completed, Cancelled) | NOT NULL                  |
+| changed_by      | INT                                           | FK → users.id             |
+| changed_at      | TIMESTAMP                                     | DEFAULT CURRENT_TIMESTAMP |
+
+---
+
+## Relationship
+
+```text
+Trips
+   │
+   │ 1 : N
+   ▼
+Trip Status History
+```
+
+---
+
+# Benefits
+
+### 1. Professional ERP Design
+
+Instead of only knowing
+
+> Current Status = Completed
+
+we know
+
+```text
+10:12 AM
+
+Draft
+
+↓
+
+10:17 AM
+
+Dispatched
+
+↓
+
+2:41 PM
+
+Completed
+```
+
+Judges appreciate systems that preserve operational history rather than overwriting it.
+
+---
+
+### 2. Easier Debugging
+
+If a trip reaches an unexpected state, we can trace exactly when and by whom the change occurred.
+
+---
+
+### 3. Dashboard Support
+
+This table can power features like:
+
+* Recent trip activity
+* Timeline views
+* Operational logs
+* Audit reports
+
+without additional complexity.
+
+---
+
+### 4. Better Demo
+
+During the presentation, we can say:
+
+> "TransitOps maintains a complete lifecycle history for every trip, ensuring traceability and auditability, which is a key characteristic of ERP systems."
+
+That's a stronger story than simply updating a status field.
+
+---
+
+# Final ER Diagram (v1.1)
+
+```text
+                 Roles
+                   │
+                   │ 1:N
+                   ▼
+                 Users
+                   │
+                   │
+        ┌──────────┴──────────┐
+        │                     │
+        ▼                     ▼
+    Drivers              Vehicles
+        │                     │
+        └─────────┬───────────┘
+                  │
+                  ▼
+                Trips
+                  │
+        ┌─────────┼──────────┬──────────────┐
+        ▼         ▼          ▼              ▼
+ Maintenance   FuelLogs   Expenses   TripStatusHistory
+                  │
+                  ▼
+            ActivityLogs
+```
+
+---
+
+# Scope Lock Confirmation
+
+At this point, the architecture is intentionally restrained.
+
+### We will **NOT** add:
+
+* ❌ Notifications table
+* ❌ Vehicle documents
+* ❌ Driver documents
+* ❌ Dispatch queue
+* ❌ Analytics tables
+* ❌ Settings tables
+* ❌ Fleet regions
+* ❌ Companies/Organizations
+* ❌ Route master
+* ❌ Fuel stations
+* ❌ GPS tracking
+
+All analytics will be derived from transactional data through SQL queries rather than stored in separate tables.
+
+---
+
+# Architecture Freeze (Before Phase 4)
+
+We now have the following artifacts locked:
+
+### Phase 0
+
+* ✅ Problem Understanding
+
+### Phase 1
+
+* ✅ Business Analysis
+
+### Phase 2
+
+* ✅ Solution Design
+
+### Phase 3
+
+* ✅ Database Design (Final v1.1)
+
+This forms a stable foundation for the remainder of the project.
+
+---
+
+## My Assessment
+
+As your Solution Architect, I believe this database is **well-balanced** for the Odoo hackathon:
+
+* **Not under-engineered:** It includes proper normalization, referential integrity, auditability, and lifecycle tracking.
+* **Not over-engineered:** It avoids unnecessary abstractions and keeps the implementation realistic for an 8-hour build by a two-person team.
+* **Aligned with judging criteria:** It emphasizes strong business logic, relational modeling, maintainability, and ERP-style workflows over sheer feature count.
+
+I consider **Phase 3 complete and the database schema frozen**. From this point onward, all backend APIs, frontend modules, and business logic should be built against this schema unless we discover a blocking issue during implementation.
