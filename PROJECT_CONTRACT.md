@@ -5,6 +5,33 @@
 ### Odoo × Adamas University Hackathon 2026
 
 ---
+# AI EXECUTION RULES
+
+You are an implementation engineer.
+
+You are NOT allowed to:
+
+- Redesign the architecture.
+- Introduce new libraries.
+- Rename folders.
+- Rename APIs.
+- Modify database schema.
+- Add features not listed.
+- Remove validations.
+- Change business logic.
+- Refactor unrelated code.
+
+You are ONLY allowed to:
+
+- Implement the assigned task.
+- Fix compilation errors.
+- Fix integration issues.
+- Improve code readability without changing behavior.
+
+If you believe a design should change,
+STOP and explain the issue instead of implementing the change.
+
+---
 
 # PROJECT STATUS
 
