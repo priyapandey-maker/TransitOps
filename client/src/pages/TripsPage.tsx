@@ -229,12 +229,12 @@ export default function TripsPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 max-w-7xl mx-auto text-left">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Trips Operations</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Trips Operations</h1>
+          <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">
             Dispatch, route tracking, and lifecycle workflow management
           </p>
         </div>
@@ -242,9 +242,9 @@ export default function TripsPage() {
           <button
             onClick={openCreateModal}
             className="
-              flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg text-white
-              bg-primary-600 hover:bg-primary-700 active:bg-primary-800 shadow-sm
-              transition-colors duration-150
+              flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-buttons text-white
+              bg-primary-500 hover:bg-primary-600 active:bg-primary-700 shadow-sm shadow-primary-500/10
+              transition-saas btn-press
             "
           >
             <Plus size={16} />
@@ -271,10 +271,9 @@ export default function TripsPage() {
             setCurrentPage(1);
           }}
           className="
-            px-3 py-2 text-sm rounded-lg bg-white dark:bg-slate-800
-            text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700
-            focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500
-            transition-colors duration-150
+            px-3 py-1.5 text-xs rounded-lg bg-white dark:bg-slate-900
+            text-slate-900 dark:text-slate-100 border border-slate-205 dark:border-slate-800
+            focus:outline-none transition-saas
           "
         >
           <option value="">All Statuses</option>
@@ -286,7 +285,7 @@ export default function TripsPage() {
       </div>
 
       {/* Grid Table */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-cards border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         <DataTable
           data={paginatedTrips}
           columns={columns}
