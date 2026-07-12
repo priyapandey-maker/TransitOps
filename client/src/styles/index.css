@@ -3,58 +3,71 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * TransitOps Design System
- * Professional ERP — No gradients, no glassmorphism, no animations
- * Clean, consistent, business-grade UI
+ * TransitOps Design System — Premium SaaS 2026 Edition
+ * Minimal, trustworthy, high information density, calm enterprise dashboard.
  */
 
 @theme {
-  /* Primary palette */
-  --color-primary-50: #eef2ff;
-  --color-primary-100: #e0e7ff;
-  --color-primary-200: #c7d2fe;
-  --color-primary-300: #a5b4fc;
-  --color-primary-400: #818cf8;
-  --color-primary-500: #6366f1;
+  /* Brand palette */
+  --color-primary-50: #f5f5ff;
+  --color-primary-100: #eef2ff;
+  --color-primary-200: #e0e7ff;
+  --color-primary-300: #c7d2fe;
+  --color-primary-400: #a5b4fc;
+  --color-primary-500: #5b5ceb;
   --color-primary-600: #4f46e5;
   --color-primary-700: #4338ca;
   --color-primary-800: #3730a3;
   --color-primary-900: #312e81;
 
-  /* Sidebar */
-  --color-sidebar: #0f172a;
-  --color-sidebar-hover: #1e293b;
-  --color-sidebar-active: #1e40af;
+  /* Semantic colors */
+  --color-success-500: #22c55e;
+  --color-warning-500: #f59e0b;
+  --color-danger-500: #ef4444;
+  --color-info-500: #3b82f6;
 
-  /* Status badge colors (locked per contract) */
-  --color-status-available: #16a34a;
-  --color-status-on-trip: #2563eb;
-  --color-status-in-shop: #ea580c;
-  --color-status-retired: #6b7280;
-  --color-status-draft: #8b5cf6;
-  --color-status-dispatched: #2563eb;
-  --color-status-completed: #16a34a;
-  --color-status-cancelled: #dc2626;
-  --color-status-suspended: #dc2626;
-  --color-status-off-duty: #6b7280;
-  --color-status-open: #ea580c;
-  --color-status-active: #16a34a;
-  --color-status-inactive: #6b7280;
+  /* Standard neutral palette */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+
+  /* Custom UI tokens */
+  --color-bg-base: #f8fafc;
+  --color-border-base: #e2e8f0;
+
+  /* Border radius specification */
+  --radius-inputs: 12px;
+  --radius-buttons: 12px;
+  --radius-tables: 16px;
+  --radius-cards: 18px;
+  --radius-badges: 999px;
+
+  /* Soft custom SaaS shadows (Vercel-like) */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.02), 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
 }
 
-/* Base layer */
+/* Base styles configuration */
 @layer base {
   html {
     @apply scroll-smooth;
   }
 
   body {
-    @apply bg-gray-50 text-slate-900 antialiased;
-    @apply dark:bg-slate-900 dark:text-slate-100;
+    @apply bg-slate-50 text-slate-900 antialiased transition-colors duration-200;
+    @apply dark:bg-slate-950 dark:text-slate-100;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
-  /* Scrollbar styling */
+  /* Scrollbars styling */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -65,7 +78,67 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-slate-300 rounded-full;
-    @apply dark:bg-slate-600;
+    @apply bg-slate-200 rounded-full;
+    @apply dark:bg-slate-800;
   }
 }
+
+/* Subtle transitions configuration for tactile responsiveness */
+.transition-saas {
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hover lift and click active press animation */
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* Card radius overrides */
+.rounded-xl {
+  border-radius: var(--radius-cards, 18px) !important;
+}
+
+/* Button & Input radius overrides */
+.rounded-lg {
+  border-radius: var(--radius-inputs, 12px) !important;
+}
+
+/* Form Input Elements Overrides */
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="email"],
+input[type="date"],
+select,
+textarea {
+  border-radius: var(--radius-inputs, 12px) !important;
+  padding-top: 0.625rem !important;
+  padding-bottom: 0.625rem !important;
+  padding-left: 0.875rem !important;
+  border-color: var(--color-slate-200, #e2e8f0) !important;
+  background-color: #ffffff !important;
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.dark input[type="text"],
+.dark input[type="number"],
+.dark input[type="password"],
+.dark input[type="email"],
+.dark input[type="date"],
+.dark select,
+.dark textarea {
+  border-color: var(--color-slate-800, #1e293b) !important;
+  background-color: var(--color-slate-900, #0f172a) !important;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-primary-500, #5b5ceb) !important;
+  box-shadow: 0 0 0 4px rgba(91, 92, 235, 0.08) !important;
+}
+

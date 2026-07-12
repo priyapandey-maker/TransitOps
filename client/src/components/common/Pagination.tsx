@@ -21,26 +21,25 @@ export default function Pagination({
   const endIdx = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-b-xl">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-b-tables">
       {/* Items count */}
-      <div className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+      <div className="text-xs text-slate-500 dark:text-slate-400">
         Showing <span className="font-semibold text-slate-800 dark:text-slate-200">{startIdx}</span> to{' '}
         <span className="font-semibold text-slate-800 dark:text-slate-200">{endIdx}</span> of{' '}
         <span className="font-semibold text-slate-800 dark:text-slate-200">{totalItems}</span> entries
       </div>
 
       {/* Page controls */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1.5">
         <button
           type="button"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
           className="
-            p-1.5 rounded-lg border border-slate-200 dark:border-slate-700
-            text-slate-600 dark:text-slate-400
-            hover:bg-slate-50 dark:hover:bg-slate-700
-            disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent
-            transition-colors duration-150
+            p-2 rounded-buttons border border-slate-200 dark:border-slate-800
+            text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800
+            disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent
+            transition-saas btn-press
           "
           aria-label="Previous page"
         >
@@ -56,11 +55,11 @@ export default function Pagination({
               type="button"
               onClick={() => onPageChange(pageNum)}
               className={`
-                px-3 py-1.5 text-xs sm:text-sm rounded-lg font-medium border transition-colors duration-150
+                px-3 py-1.5 text-xs rounded-buttons font-medium border transition-saas btn-press
                 ${
                   isActive
-                    ? 'bg-primary-600 border-primary-600 text-white'
-                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
+                    ? 'bg-primary-500 border-primary-500 text-white shadow-sm shadow-primary-500/10'
+                    : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }
               `}
             >
@@ -74,11 +73,10 @@ export default function Pagination({
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
           className="
-            p-1.5 rounded-lg border border-slate-200 dark:border-slate-700
-            text-slate-600 dark:text-slate-400
-            hover:bg-slate-50 dark:hover:bg-slate-700
-            disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent
-            transition-colors duration-150
+            p-2 rounded-buttons border border-slate-200 dark:border-slate-800
+            text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800
+            disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent
+            transition-saas btn-press
           "
           aria-label="Next page"
         >
