@@ -72,30 +72,39 @@ export default function LoginPage() {
       </button>
 
       {/* Left panel: Branding & Fleet operations overview */}
-      <div className="hidden lg:flex lg:w-1/2 bg-slate-900 text-white p-12 flex-col justify-between relative overflow-hidden border-r border-slate-800">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(91,92,235,0.12),transparent_50%)]" />
+      <div className="hidden lg:flex lg:w-1/2 bg-slate-900 text-white p-16 flex-col justify-between relative overflow-hidden border-r border-slate-800 antialiased">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(91,92,235,0.08),transparent_50%)]" />
         <div className="relative flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-primary-500 animate-pulse" />
-          <span className="text-base font-bold tracking-tight">{APP_NAME}</span>
+          <span className="h-2 w-2 rounded-full bg-primary-500 animate-pulse" />
+          <span className="text-sm font-semibold tracking-wide uppercase text-slate-400">{APP_NAME} Control</span>
         </div>
 
-        <div className="relative max-w-lg my-auto space-y-8">
-          <div className="space-y-4">
-            <h1 className="text-4xl font-extrabold tracking-tight leading-tight">
-              Fleet Operations & Dispatch Control Center.
+        <div className="relative max-w-xl my-auto space-y-10">
+          <div className="space-y-6">
+            <h1 className="text-[36px] md:text-[48px] lg:text-[64px] font-extrabold tracking-[-0.04em] leading-[1.05] text-white">
+              Fleet Operations & Dispatch Control.
             </h1>
-            <p className="text-sm text-slate-400 leading-relaxed">
+            <p className="text-[22px] font-normal leading-[1.7] text-white/70">
               Supervise assets, schedule preventive maintenance, optimize trip dispatch logs, and monitor workforce compliance in real-time.
             </p>
           </div>
 
-          <div className="space-y-4 border-l-2 border-primary-500 pl-4 text-xs text-slate-400">
-            <div className="space-y-2">
-              <p className="font-semibold text-white">Active Operational Supervision:</p>
-              <ul className="list-disc pl-4 space-y-1">
-                <li>Real-time capacity and load calculations</li>
-                <li>Preventive lifecycle maintenance scheduling</li>
-                <li>Role-based access control registries</li>
+          <div className="space-y-4 border-l-2 border-primary-500 pl-6">
+            <div className="space-y-3 text-lg font-medium text-slate-300">
+              <p className="font-semibold text-white">Active Operational Supervision</p>
+              <ul className="space-y-2.5">
+                <li className="flex items-center gap-2 text-slate-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary-500 flex-shrink-0" />
+                  <span>Real-time capacity and load calculations</span>
+                </li>
+                <li className="flex items-center gap-2 text-slate-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary-500 flex-shrink-0" />
+                  <span>Preventive lifecycle maintenance scheduling</span>
+                </li>
+                <li className="flex items-center gap-2 text-slate-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary-500 flex-shrink-0" />
+                  <span>Role-based access control registries</span>
+                </li>
               </ul>
             </div>
           </div>
