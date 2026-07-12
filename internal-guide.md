@@ -1207,3 +1207,618 @@ As your Solution Architect, I believe this database is **well-balanced** for the
 * **Aligned with judging criteria:** It emphasizes strong business logic, relational modeling, maintainability, and ERP-style workflows over sheer feature count.
 
 I consider **Phase 3 complete and the database schema frozen**. From this point onward, all backend APIs, frontend modules, and business logic should be built against this schema unless we discover a blocking issue during implementation.
+---
+Excellent. We have now reached the phase where the **quality of the backend** will largely determine the project's engineering score.
+
+This phase is **not about writing code**. It's about defining an architecture that is easy to implement, easy to review, and aligns with our locked database and UI.
+
+Our goals are:
+
+* Clean separation of concerns
+* Predictable request flow
+* Reusable business logic
+* Secure authentication
+* Simple enough for an 8-hour hackathon
+
+---
+
+# Phase 4 – Backend Architecture
+
+## 1. Architecture Pattern (Locked)
+
+We will use a **Layered Modular MVC** architecture.
+
+```text
+Client (React)
+       │
+       ▼
+Routes
+       │
+       ▼
+Controllers
+       │
+       ▼
+Services
+       │
+       ▼
+Repositories (Database Layer)
+       │
+       ▼
+MySQL (mysql2)
+```
+
+### Why this architecture?
+
+It keeps each layer focused:
+
+* **Routes** → Define endpoints.
+* **Controllers** → Handle HTTP requests/responses.
+* **Services** → Contain business rules.
+* **Repositories** → Execute SQL queries only.
+* **Database** → Store data.
+
+**Important Rule:** Controllers must never contain business logic or SQL.
+
+---
+
+# 2. Backend Folder Structure (Locked)
+
+```text
+server/
+│
+├── src/
+│   ├── config/
+│   │   ├── db.ts
+│   │   ├── env.ts
+│   │   └── constants.ts
+│   │
+│   ├── routes/
+│   │   ├── auth.routes.ts
+│   │   ├── dashboard.routes.ts
+│   │   ├── vehicle.routes.ts
+│   │   ├── driver.routes.ts
+│   │   ├── trip.routes.ts
+│   │   ├── maintenance.routes.ts
+│   │   ├── fuel.routes.ts
+│   │   ├── expense.routes.ts
+│   │   └── analytics.routes.ts
+│   │
+│   ├── controllers/
+│   │   ├── auth.controller.ts
+│   │   ├── dashboard.controller.ts
+│   │   ├── vehicle.controller.ts
+│   │   ├── driver.controller.ts
+│   │   ├── trip.controller.ts
+│   │   ├── maintenance.controller.ts
+│   │   ├── fuel.controller.ts
+│   │   ├── expense.controller.ts
+│   │   └── analytics.controller.ts
+│   │
+│   ├── services/
+│   │   ├── auth.service.ts
+│   │   ├── dashboard.service.ts
+│   │   ├── vehicle.service.ts
+│   │   ├── driver.service.ts
+│   │   ├── trip.service.ts
+│   │   ├── maintenance.service.ts
+│   │   ├── fuel.service.ts
+│   │   ├── expense.service.ts
+│   │   └── analytics.service.ts
+│   │
+│   ├── repositories/
+│   │   ├── auth.repository.ts
+│   │   ├── vehicle.repository.ts
+│   │   ├── driver.repository.ts
+│   │   ├── trip.repository.ts
+│   │   ├── maintenance.repository.ts
+│   │   ├── fuel.repository.ts
+│   │   ├── expense.repository.ts
+│   │   └── analytics.repository.ts
+│   │
+│   ├── middleware/
+│   │   ├── auth.middleware.ts
+│   │   ├── role.middleware.ts
+│   │   ├── validation.middleware.ts
+│   │   ├── error.middleware.ts
+│   │   └── notFound.middleware.ts
+│   │
+│   ├── validators/
+│   │   ├── auth.validator.ts
+│   │   ├── vehicle.validator.ts
+│   │   ├── driver.validator.ts
+│   │   ├── trip.validator.ts
+│   │   ├── maintenance.validator.ts
+│   │   ├── fuel.validator.ts
+│   │   └── expense.validator.ts
+│   │
+│   ├── utils/
+│   │   ├── jwt.ts
+│   │   ├── password.ts
+│   │   ├── response.ts
+│   │   └── logger.ts
+│   │
+│   ├── types/
+│   │
+│   ├── app.ts
+│   └── server.ts
+│
+├── uploads/
+├── sql/
+├── .env
+├── package.json
+└── tsconfig.json
+```
+
+This structure is modular without becoming overly complex.
+
+---
+
+# 3. Request Flow
+
+Every request follows the same path:
+
+```text
+Client
+   │
+   ▼
+Route
+   │
+   ▼
+JWT Authentication
+   │
+   ▼
+Role Authorization
+   │
+   ▼
+Validation
+   │
+   ▼
+Controller
+   │
+   ▼
+Service
+   │
+   ▼
+Repository
+   │
+   ▼
+MySQL
+```
+
+Every module will follow this identical flow.
+
+---
+
+# 4. API Modules
+
+We will expose nine API groups.
+
+| Module      | Purpose              |
+| ----------- | -------------------- |
+| Auth        | Login & session      |
+| Dashboard   | KPI data             |
+| Vehicles    | Fleet CRUD           |
+| Drivers     | Driver CRUD          |
+| Trips       | Trip lifecycle       |
+| Maintenance | Maintenance workflow |
+| Fuel        | Fuel logs            |
+| Expenses    | Expense logs         |
+| Analytics   | Reports & KPIs       |
+
+This mirrors our frontend modules and database tables.
+
+---
+
+# 5. Authentication Strategy
+
+## Login
+
+```text
+Email
+Password
+
+↓
+
+bcrypt.compare()
+
+↓
+
+JWT Token
+
+↓
+
+Client stores token
+
+↓
+
+Protected APIs
+```
+
+JWT payload:
+
+```json
+{
+  "userId": 1,
+  "role": "Fleet Manager"
+}
+```
+
+The token contains only the information needed for authorization.
+
+---
+
+# 6. Authorization Strategy
+
+We'll use role-based middleware.
+
+Example access matrix:
+
+| API         | Admin | Fleet Manager | Dispatcher | Safety Officer | Financial Analyst |
+| ----------- | :---: | :-----------: | :--------: | :------------: | :---------------: |
+| Vehicles    |   ✓   |       ✓       |    View    |      View      |        View       |
+| Drivers     |   ✓   |      View     |      ✓     |        ✓       |        View       |
+| Trips       |   ✓   |       ✓       |      ✓     |      View      |        View       |
+| Maintenance |   ✓   |       ✓       |    View    |      View      |        View       |
+| Fuel        |   ✓   |       ✓       |    View    |      View      |         ✓         |
+| Expenses    |   ✓   |       ✓       |    View    |      View      |         ✓         |
+| Analytics   |   ✓   |       ✓       |    View    |      View      |         ✓         |
+
+This gives clear permission boundaries while keeping the implementation straightforward.
+
+---
+
+# 7. Validation Strategy
+
+Validation occurs in two places.
+
+### Frontend
+
+* React Hook Form
+* Zod
+
+Purpose:
+
+Immediate user feedback.
+
+---
+
+### Backend
+
+Server-side validation is mandatory.
+
+Examples:
+
+* Required fields
+* Data types
+* Status values
+* Positive numbers
+* Date formats
+* Business-rule preconditions
+
+The backend remains the source of truth.
+
+---
+
+# 8. Error Handling
+
+We'll use a centralized error middleware.
+
+Standard response format:
+
+```json
+{
+  "success": false,
+  "message": "Vehicle is already assigned to an active trip.",
+  "errors": []
+}
+```
+
+Success response:
+
+```json
+{
+  "success": true,
+  "message": "Trip dispatched successfully.",
+  "data": {}
+}
+```
+
+Consistent response shapes simplify frontend integration.
+
+---
+
+# 9. Business Logic Placement
+
+This is a critical rule.
+
+| Layer        | Responsibility            |
+| ------------ | ------------------------- |
+| Routes       | Endpoint definitions      |
+| Controllers  | Request/response handling |
+| Services     | Business logic            |
+| Repositories | SQL queries               |
+| Middleware   | Cross-cutting concerns    |
+
+### Example
+
+**Trip Dispatch**
+
+Controller:
+
+* Read request
+* Call service
+* Return response
+
+Service:
+
+* Check vehicle availability
+* Check driver availability
+* Check license expiry
+* Check cargo capacity
+* Update statuses
+* Record trip history
+
+Repository:
+
+* Execute SQL statements
+
+This separation keeps the code maintainable and testable.
+
+---
+
+# 10. Transactions
+
+Certain operations affect multiple tables and should be executed within a MySQL transaction.
+
+### Required Transactional Operations
+
+1. **Trip Dispatch**
+
+   * Update `trips`
+   * Update `vehicles`
+   * Update `drivers`
+   * Insert `trip_status_history`
+   * Insert `activity_logs`
+
+2. **Trip Completion**
+
+   * Update `trips`
+   * Update `vehicles`
+   * Update `drivers`
+   * Insert `trip_status_history`
+   * Insert `activity_logs`
+
+3. **Maintenance Open**
+
+   * Insert `maintenance_logs`
+   * Update `vehicles`
+   * Insert `activity_logs`
+
+4. **Maintenance Close**
+
+   * Update `maintenance_logs`
+   * Update `vehicles`
+   * Insert `activity_logs`
+
+Using transactions ensures the database never ends up in an inconsistent state.
+
+---
+
+# 11. API Versioning
+
+For this hackathon, we'll keep the API simple:
+
+```text
+/api/auth
+/api/dashboard
+/api/vehicles
+/api/drivers
+/api/trips
+/api/maintenance
+/api/fuel
+/api/expenses
+/api/analytics
+```
+
+No version prefixes (`/v1`) are necessary for the initial release.
+
+---
+
+# Phase 4 Deliverables (Completed)
+
+We have now defined:
+
+* ✅ Backend architecture pattern
+* ✅ Folder structure
+* ✅ Request lifecycle
+* ✅ API modules
+* ✅ Authentication strategy
+* ✅ Authorization strategy
+* ✅ Validation strategy
+* ✅ Error handling
+* ✅ Layer responsibilities
+* ✅ Transaction strategy
+* ✅ API organization
+
+## One Recommendation Before Phase 5
+
+I recommend one small addition that fits our engineering principles:
+
+Introduce a **shared response helper** (e.g., `utils/response.ts`) that all controllers use to return responses in a consistent format (`success`, `message`, `data`, `errors`). This adds almost no complexity, improves maintainability, and ensures the frontend never has to handle inconsistent API shapes.
+
+I **don't** recommend adding dependency injection, CQRS, event buses, or repository abstractions—they're unnecessary for this hackathon. The response helper is the only extra I'd lock in before moving to the frontend architecture.
+---
+Agreed. I consider this the final refinement before we freeze the backend architecture.
+
+---
+
+# Backend Architecture v1.1 (Final & Locked)
+
+## Shared Response Helper
+
+We'll add one utility:
+
+```text
+src/
+└── utils/
+    └── response.ts
+```
+
+Purpose:
+
+Every controller returns responses through the same helper instead of manually constructing JSON.
+
+---
+
+## Standard Success Response
+
+```json
+{
+  "success": true,
+  "message": "Vehicle created successfully.",
+  "data": {
+    ...
+  }
+}
+```
+
+---
+
+## Standard Error Response
+
+```json
+{
+  "success": false,
+  "message": "Vehicle registration already exists.",
+  "errors": []
+}
+```
+
+---
+
+## Validation Error Response
+
+```json
+{
+  "success": false,
+  "message": "Validation failed.",
+  "errors": [
+    {
+      "field": "registration_number",
+      "message": "Registration number is required."
+    }
+  ]
+}
+```
+
+---
+
+## Unauthorized
+
+```json
+{
+  "success": false,
+  "message": "Unauthorized."
+}
+```
+
+---
+
+## Forbidden
+
+```json
+{
+  "success": false,
+  "message": "You don't have permission to perform this action."
+}
+```
+
+---
+
+## Not Found
+
+```json
+{
+  "success": false,
+  "message": "Trip not found."
+}
+```
+
+---
+
+# Why This Matters
+
+Although it seems like a small addition, it has several engineering benefits:
+
+* Every API behaves consistently.
+* Frontend error handling becomes simpler.
+* API documentation is easier to write.
+* Debugging is more predictable.
+* It reflects production-quality API design.
+
+This aligns well with Odoo's emphasis on maintainability and clean engineering.
+
+---
+
+# Architecture Freeze (Current State)
+
+At this point, we have completed and locked:
+
+### ✅ Phase 0
+
+* Project Understanding
+
+### ✅ Phase 1
+
+* Business Analysis
+
+### ✅ Phase 2
+
+* Solution Design
+
+### ✅ Phase 3
+
+* Database Design (v1.1)
+
+### ✅ Phase 4
+
+* Backend Architecture (v1.1)
+
+---
+
+## Current Project Status
+
+We now have a complete backend blueprint:
+
+* **Architecture:** Layered Modular MVC
+* **Database:** 10 normalized MySQL tables
+* **Authentication:** JWT + bcrypt
+* **Authorization:** RBAC middleware
+* **Business Logic:** Service layer
+* **Data Access:** Repository layer
+* **Validation:** Frontend + Backend
+* **Transactions:** For multi-table operations
+* **Response Format:** Standardized helper
+* **Error Handling:** Centralized middleware
+
+This is a realistic, production-oriented architecture that remains achievable within the hackathon constraints.
+
+---
+
+## My Review Before Moving On
+
+As your Solution Architect, I don't see any architectural gaps that need to be addressed before moving to the frontend. We've resisted unnecessary patterns (DI containers, CQRS, event buses, ORMs) while still adopting practices that clearly improve quality.
+
+The next phase, **Phase 5 – Frontend Architecture**, will focus on:
+
+* Final folder structure
+* Routing strategy
+* Layout hierarchy
+* Component architecture
+* Design system
+* Theme (light/dark)
+* Reusable UI components
+* Frontend state management
+* Frontend ↔ Backend integration strategy
+
+This phase will be guided by the **official TransitOps dashboard mockups** you've shared so that the implementation remains visually consistent with the organizers' expectations.
