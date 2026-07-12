@@ -341,3 +341,57 @@ export const dashboardHeaders: Record<string, DashboardHeaderConfig> = {
     statusSeverity: 'normal',
   },
 };
+
+// --- Additional Role Dashboard Charts ---
+export const adminFleetHealthChart: ChartCardProps['data'] = [
+  { label: 'Excellent (90–100%)', value: 28, max: 48, color: 'bg-green-500' },
+  { label: 'Good (70–89%)',       value: 14, max: 48, color: 'bg-blue-500' },
+  { label: 'Fair (50–69%)',       value: 4,  max: 48, color: 'bg-amber-500' },
+  { label: 'Poor (<50%)',         value: 2,  max: 48, color: 'bg-red-500' },
+];
+
+export const adminActiveTripsChart: ChartCardProps['data'] = [
+  { label: 'Pune → Mumbai',       value: 5, max: 6, color: 'bg-blue-500' },
+  { label: 'Chennai → Bengaluru', value: 3, max: 6, color: 'bg-indigo-500' },
+  { label: 'Delhi → Jaipur',      value: 2, max: 6, color: 'bg-purple-500' },
+  { label: 'Mumbai → Goa',        value: 2, max: 6, color: 'bg-teal-500' },
+];
+
+export const fleetUtilizationChart: ChartCardProps['data'] = [
+  { label: 'Heavy Truck',     value: 24, max: 30, color: 'bg-blue-500' },
+  { label: 'Medium Duty',     value: 12, max: 30, color: 'bg-indigo-500' },
+  { label: 'Light Commercial', value: 8,  max: 30, color: 'bg-purple-500' },
+  { label: 'Passenger SUV',    value: 4,  max: 30, color: 'bg-teal-500' },
+];
+
+export const fleetMaintenanceTrendsChart: ChartCardProps['data'] = [
+  { label: 'Preventive Service', value: 18, max: 20, color: 'bg-green-500' },
+  { label: 'Corrective Repairs', value: 6,  max: 20, color: 'bg-orange-500' },
+  { label: 'Diagnostic Check',   value: 4,  max: 20, color: 'bg-blue-500' },
+];
+
+export const dispatchLiveQueueChart: ChartCardProps['data'] = [
+  { label: 'Active',    value: 12, max: 15, color: 'bg-blue-500' },
+  { label: 'Scheduled', value: 4,  max: 15, color: 'bg-indigo-500' },
+  { label: 'Staging',   value: 2,  max: 15, color: 'bg-purple-500' },
+];
+
+export const dispatchTripCompletionChart: ChartCardProps['data'] = [
+  { label: 'Completed', value: 124, max: 150, color: 'bg-green-500' },
+  { label: 'Delayed',   value: 6,   max: 150, color: 'bg-amber-500' },
+  { label: 'Cancelled', value: 3,   max: 150, color: 'bg-red-500' },
+];
+
+export const financeFuelSpendChart: ChartCardProps['data'] = [
+  { label: 'Q1 Spend', value: 480000, max: 700000, color: 'bg-indigo-500' },
+  { label: 'Q2 Spend', value: 550000, max: 700000, color: 'bg-blue-500' },
+  { label: 'Q3 Spend', value: 642000, max: 700000, color: 'bg-purple-500' },
+];
+
+export const financeROIChart: ChartCardProps['data'] = [
+  { label: 'Tata Signa',   value: 240, max: 250, color: 'bg-green-500' },
+  { label: 'Eicher Pro',   value: 239, max: 250, color: 'bg-teal-500' },
+  { label: 'Bolero Truck', value: 232, max: 250, color: 'bg-blue-500' },
+  { label: 'Super Carry',  value: 210, max: 250, color: 'bg-indigo-500' },
+];
+
