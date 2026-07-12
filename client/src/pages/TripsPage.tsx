@@ -12,6 +12,7 @@ import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import TripForm from '../components/forms/TripForm';
 import { useAuth } from '../context/AuthContext';
+import ErrorState from '../components/common/ErrorState';
 
 export default function TripsPage() {
   const { userRole } = useAuth();
@@ -22,6 +23,7 @@ export default function TripsPage() {
   // State Management
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
@@ -51,6 +53,7 @@ export default function TripsPage() {
   // Load Trips
   const loadTrips = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const response = await getTrips({
         search: search || undefined,
@@ -61,6 +64,7 @@ export default function TripsPage() {
       }
     } catch (err) {
       console.error(err);
+      setError('Failed to load dispatch log. Please check your connection.');
     } finally {
       setLoading(false);
     }
@@ -254,6 +258,10 @@ export default function TripsPage() {
       rows,
     });
   };
+
+  if (error) {
+    return <ErrorState fullPage message={error} onRetry={loadTrips} />;
+  }
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto text-left">

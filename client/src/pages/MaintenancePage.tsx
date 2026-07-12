@@ -27,6 +27,7 @@ import type { HistoryItem } from '../components/common/ServiceHistory';
 import { useAuth } from '../context/AuthContext';
 import ActionMenu from '../components/tables/ActionMenu';
 import type { ActionMenuItem } from '../components/tables/ActionMenu';
+import ErrorState from '../components/common/ErrorState';
 
 export default function MaintenancePage() {
   const { userRole } = useAuth();
@@ -37,6 +38,7 @@ export default function MaintenancePage() {
   // State Management
   const [maintenances, setMaintenances] = useState<Maintenance[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
@@ -64,6 +66,7 @@ export default function MaintenancePage() {
   // Load Maintenances
   const loadMaintenances = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const response = await getMaintenances({
         search: search || undefined,
@@ -74,6 +77,7 @@ export default function MaintenancePage() {
       }
     } catch (err) {
       console.error(err);
+      setError('Failed to load maintenance records. Please check your connection.');
     } finally {
       setLoading(false);
     }
@@ -348,6 +352,10 @@ export default function MaintenancePage() {
       rows,
     });
   };
+
+  if (error) {
+    return <ErrorState fullPage message={error} onRetry={loadMaintenances} />;
+  }
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto text-left">

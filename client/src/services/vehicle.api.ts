@@ -2,7 +2,7 @@ import apiClient, { handleApiError } from './api';
 import type { ApiResponse } from '../types/api.types';
 import type { Vehicle, VehicleFormData } from '../types/vehicle.types';
 
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 // Reusable mock database in localStorage or memory
 let mockVehicles: Vehicle[] = [

@@ -1,6 +1,8 @@
 import apiClient, { handleApiError } from './api';
 import type { ApiResponse } from '../types/api.types';
 
+// TODO: The backend does not yet provide a /dashboard/analytics endpoint. 
+// Keep this mock active until the backend implements it to prevent the UI from breaking.
 const USE_MOCK = true;
 
 export interface VehiclePerformance {

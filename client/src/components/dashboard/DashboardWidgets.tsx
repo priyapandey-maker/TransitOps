@@ -87,7 +87,18 @@ export function ChartCard({ title, icon: Icon, data }: ChartCardProps) {
               itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
               labelStyle={{ color: '#64748b', marginBottom: '4px' }}
             />
-            <Area type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill={`url(#colorValue-${title.replace(/\s+/g, '')})`} activeDot={{ r: 6, fill: '#6366f1', stroke: '#fff', strokeWidth: 2 }} />
+            <Area 
+              type="natural" 
+              dataKey="value" 
+              stroke="#6366f1" 
+              strokeWidth={4} 
+              fillOpacity={1} 
+              fill={`url(#colorValue-${title.replace(/\s+/g, '')})`} 
+              dot={{ r: 5, fill: '#ffffff', stroke: '#6366f1', strokeWidth: 3 }}
+              activeDot={{ r: 8, fill: '#6366f1', stroke: '#fff', strokeWidth: 3 }} 
+              animationDuration={1500}
+              animationEasing="ease-in-out"
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>

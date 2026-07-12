@@ -5,7 +5,7 @@
  * the generic DashboardWidgets building blocks.
  */
 
-import type { MetricCardProps, ChartCardProps, TimelineEvent, Alert, TableColumn, TableRow, QuickAction } from '../components/dashboard/DashboardWidgets';
+import type { MetricCardProps,  TimelineEvent, Alert, TableColumn, TableRow, QuickAction } from '../components/dashboard/DashboardWidgets';
 import {
   Truck, Route, Users, Wrench, Fuel,
   DollarSign, Clock, Plus, BarChart3, Shield, FileText,
@@ -83,23 +83,6 @@ export const adminTripRows: TableRow[] = [
 
 export const adminTripStatusColors = tripStatusColors;
 
-export const adminFleetChart: ChartCardProps['data'] = [
-  { label: 'Available',    value: 42, max: 48, color: 'bg-green-500' },
-  { label: 'On Trip',      value: 12, max: 48, color: 'bg-blue-500' },
-  { label: 'In Maintenance', value: 4,  max: 48, color: 'bg-orange-500' },
-  { label: 'Retired',      value: 2,  max: 48, color: 'bg-slate-400' },
-];
-
-export const adminTripCompletionChart: ChartCardProps['data'] = [
-  { label: 'Mon', value: 14, max: 20, color: 'bg-primary-500' },
-  { label: 'Tue', value: 18, max: 20, color: 'bg-primary-500' },
-  { label: 'Wed', value: 11, max: 20, color: 'bg-primary-500' },
-  { label: 'Thu', value: 16, max: 20, color: 'bg-primary-500' },
-  { label: 'Fri', value: 19, max: 20, color: 'bg-primary-500' },
-  { label: 'Sat', value: 8,  max: 20, color: 'bg-primary-400' },
-  { label: 'Today', value: 12, max: 20, color: 'bg-primary-600' },
-];
-
 export const adminTimeline: TimelineEvent[] = [
   { time: '10:42 AM', actor: 'Admin User',      event: 'Dispatched trip TRP-3882 to Pune→Mumbai corridor' },
   { time: '09:15 AM', actor: 'Dispatcher User',  event: 'Completed trip TRP-3881 — cargo delivered successfully' },
@@ -125,20 +108,6 @@ export const fleetMetrics: Omit<MetricCardProps, never>[] = [
   { label: 'Insurance Expiry',      value: '3',    subtitle: 'Policies expiring within 30 days', icon: Shield,    iconColor: iconColors.red },
   { label: 'Registration Expiry',   value: '1',    subtitle: 'RC renewal due this month',        icon: FileText,  iconColor: iconColors.amber },
   { label: 'Avg Vehicle Health',    value: '92%',  subtitle: 'Fleet health score',               icon: CheckCircle, iconColor: iconColors.teal, trend: 'Good condition', trendDirection: 'up' },
-];
-
-export const fleetStatusChart: ChartCardProps['data'] = [
-  { label: 'Available',      value: 42, max: 48, color: 'bg-green-500' },
-  { label: 'On Trip',        value: 12, max: 48, color: 'bg-blue-500' },
-  { label: 'In Maintenance', value: 4,  max: 48, color: 'bg-orange-500' },
-  { label: 'Retired',        value: 2,  max: 48, color: 'bg-slate-400' },
-];
-
-export const fleetHealthChart: ChartCardProps['data'] = [
-  { label: 'Excellent (90–100%)', value: 28, max: 48, color: 'bg-green-500' },
-  { label: 'Good (70–89%)',       value: 14, max: 48, color: 'bg-blue-500' },
-  { label: 'Fair (50–69%)',       value: 4,  max: 48, color: 'bg-amber-500' },
-  { label: 'Poor (<50%)',         value: 2,  max: 48, color: 'bg-red-500' },
 ];
 
 export const fleetMaintenanceColumns: TableColumn[] = [
@@ -212,19 +181,6 @@ export const dispatchQueueRows: TableRow[] = [
 
 export const dispatchTripStatusColors = tripStatusColors;
 
-export const dispatchETAChart: ChartCardProps['data'] = [
-  { label: 'On Time',     value: 8,  max: 12, color: 'bg-green-500' },
-  { label: 'Slight Delay', value: 2, max: 12, color: 'bg-amber-500' },
-  { label: 'Significant Delay', value: 2, max: 12, color: 'bg-red-500' },
-];
-
-export const dispatchRouteChart: ChartCardProps['data'] = [
-  { label: 'Western Corridor',  value: 5, max: 6, color: 'bg-blue-500' },
-  { label: 'Southern Corridor', value: 3, max: 6, color: 'bg-indigo-500' },
-  { label: 'Northern Corridor', value: 2, max: 6, color: 'bg-purple-500' },
-  { label: 'Eastern Corridor',  value: 2, max: 6, color: 'bg-teal-500' },
-];
-
 export const dispatcherAlerts: Alert[] = [
   { id: 1, severity: 'critical', message: 'TRP-3884 delayed >45 min — Nagpur→Hyderabad route congestion reported', time: '8 mins ago' },
   { id: 2, severity: 'warning',  message: 'TRP-3885 approaching toll plaza — ETA adjusted by +15 min', time: '22 mins ago' },
@@ -256,24 +212,6 @@ export const financeMetrics: Omit<MetricCardProps, never>[] = [
   { label: 'Cost Per Kilometer',  value: '₹8.40',     subtitle: 'Fleet-wide average',          icon: TrendingUp,        iconColor: iconColors.teal,   trend: '−₹0.30 vs last month', trendDirection: 'down' },
   { label: 'Fleet ROI',           value: '142%',      subtitle: 'Revenue / total cost ratio',  icon: PieChart,          iconColor: iconColors.green,  trend: '+5% QoQ', trendDirection: 'up' },
   { label: 'Operational Cost',    value: '₹12,40,000', subtitle: 'July 2026 all categories',   icon: DollarSign,        iconColor: iconColors.red },
-];
-
-export const financeExpenseBreakdown: ChartCardProps['data'] = [
-  { label: 'Fuel',            value: 642000, max: 1240000, color: 'bg-indigo-500' },
-  { label: 'Maintenance',     value: 185000, max: 1240000, color: 'bg-orange-500' },
-  { label: 'Tolls & Permits', value: 98000,  max: 1240000, color: 'bg-purple-500' },
-  { label: 'Insurance',       value: 145000, max: 1240000, color: 'bg-blue-500' },
-  { label: 'Driver Payroll',  value: 170000, max: 1240000, color: 'bg-teal-500' },
-];
-
-export const financeMonthlyCostTrend: ChartCardProps['data'] = [
-  { label: 'Jan',  value: 980000,  max: 1400000, color: 'bg-primary-400' },
-  { label: 'Feb',  value: 1050000, max: 1400000, color: 'bg-primary-400' },
-  { label: 'Mar',  value: 920000,  max: 1400000, color: 'bg-primary-400' },
-  { label: 'Apr',  value: 1100000, max: 1400000, color: 'bg-primary-400' },
-  { label: 'May',  value: 1180000, max: 1400000, color: 'bg-primary-500' },
-  { label: 'Jun',  value: 1150000, max: 1400000, color: 'bg-primary-500' },
-  { label: 'Jul',  value: 1240000, max: 1400000, color: 'bg-primary-600' },
 ];
 
 export const financeExpenseColumns: TableColumn[] = [
@@ -343,55 +281,3 @@ export const dashboardHeaders: Record<string, DashboardHeaderConfig> = {
 };
 
 // --- Additional Role Dashboard Charts ---
-export const adminFleetHealthChart: ChartCardProps['data'] = [
-  { label: 'Excellent (90–100%)', value: 28, max: 48, color: 'bg-green-500' },
-  { label: 'Good (70–89%)',       value: 14, max: 48, color: 'bg-blue-500' },
-  { label: 'Fair (50–69%)',       value: 4,  max: 48, color: 'bg-amber-500' },
-  { label: 'Poor (<50%)',         value: 2,  max: 48, color: 'bg-red-500' },
-];
-
-export const adminActiveTripsChart: ChartCardProps['data'] = [
-  { label: 'Pune → Mumbai',       value: 5, max: 6, color: 'bg-blue-500' },
-  { label: 'Chennai → Bengaluru', value: 3, max: 6, color: 'bg-indigo-500' },
-  { label: 'Delhi → Jaipur',      value: 2, max: 6, color: 'bg-purple-500' },
-  { label: 'Mumbai → Goa',        value: 2, max: 6, color: 'bg-teal-500' },
-];
-
-export const fleetUtilizationChart: ChartCardProps['data'] = [
-  { label: 'Heavy Truck',     value: 24, max: 30, color: 'bg-blue-500' },
-  { label: 'Medium Duty',     value: 12, max: 30, color: 'bg-indigo-500' },
-  { label: 'Light Commercial', value: 8,  max: 30, color: 'bg-purple-500' },
-  { label: 'Passenger SUV',    value: 4,  max: 30, color: 'bg-teal-500' },
-];
-
-export const fleetMaintenanceTrendsChart: ChartCardProps['data'] = [
-  { label: 'Preventive Service', value: 18, max: 20, color: 'bg-green-500' },
-  { label: 'Corrective Repairs', value: 6,  max: 20, color: 'bg-orange-500' },
-  { label: 'Diagnostic Check',   value: 4,  max: 20, color: 'bg-blue-500' },
-];
-
-export const dispatchLiveQueueChart: ChartCardProps['data'] = [
-  { label: 'Active',    value: 12, max: 15, color: 'bg-blue-500' },
-  { label: 'Scheduled', value: 4,  max: 15, color: 'bg-indigo-500' },
-  { label: 'Staging',   value: 2,  max: 15, color: 'bg-purple-500' },
-];
-
-export const dispatchTripCompletionChart: ChartCardProps['data'] = [
-  { label: 'Completed', value: 124, max: 150, color: 'bg-green-500' },
-  { label: 'Delayed',   value: 6,   max: 150, color: 'bg-amber-500' },
-  { label: 'Cancelled', value: 3,   max: 150, color: 'bg-red-500' },
-];
-
-export const financeFuelSpendChart: ChartCardProps['data'] = [
-  { label: 'Q1 Spend', value: 480000, max: 700000, color: 'bg-indigo-500' },
-  { label: 'Q2 Spend', value: 550000, max: 700000, color: 'bg-blue-500' },
-  { label: 'Q3 Spend', value: 642000, max: 700000, color: 'bg-purple-500' },
-];
-
-export const financeROIChart: ChartCardProps['data'] = [
-  { label: 'Tata Signa',   value: 240, max: 250, color: 'bg-green-500' },
-  { label: 'Eicher Pro',   value: 239, max: 250, color: 'bg-teal-500' },
-  { label: 'Bolero Truck', value: 232, max: 250, color: 'bg-blue-500' },
-  { label: 'Super Carry',  value: 210, max: 250, color: 'bg-indigo-500' },
-];
-

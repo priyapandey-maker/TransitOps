@@ -33,6 +33,7 @@ import ExpenseForm from '../components/forms/ExpenseForm';
 import { useAuth } from '../context/AuthContext';
 import ActionMenu from '../components/tables/ActionMenu';
 import type { ActionMenuItem } from '../components/tables/ActionMenu';
+import ErrorState from '../components/common/ErrorState';
 
 type ActiveTab = 'fuel' | 'expenses';
 
@@ -61,6 +62,8 @@ export default function FuelExpensesPage() {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [expenseCurrentPage, setExpenseCurrentPage] = useState(1);
 
+  const [pageError, setPageError] = useState<string | null>(null);
+
   const itemsPerPage = 5;
 
   // Modals state
@@ -77,6 +80,7 @@ export default function FuelExpensesPage() {
   // Load Fuel Logs from API
   const loadFuelLogs = useCallback(async () => {
     setFuelLoading(true);
+    setPageError(null);
     try {
       const response = await getFuelLogs({ search: fuelSearch || undefined });
       if (response.success) {
@@ -84,6 +88,7 @@ export default function FuelExpensesPage() {
       }
     } catch (err) {
       console.error(err);
+      setPageError('Failed to load fuel logs. Please check your connection.');
     } finally {
       setFuelLoading(false);
     }
@@ -92,6 +97,7 @@ export default function FuelExpensesPage() {
   // Load Expenses from API
   const loadExpenses = useCallback(async () => {
     setExpenseLoading(true);
+    setPageError(null);
     try {
       const response = await getExpenses({
         search: expenseSearch || undefined,
@@ -102,19 +108,37 @@ export default function FuelExpensesPage() {
       }
     } catch (err) {
       console.error(err);
+      setPageError('Failed to load expenses. Please check your connection.');
     } finally {
       setExpenseLoading(false);
     }
   }, [expenseSearch, categoryFilter]);
 
-  // Trigger loads based on active view
-  useEffect(() => {
-    if (activeTab === 'fuel') {
-      loadFuelLogs();
-    } else {
-      loadExpenses();
+  // Initial parallel load
+  const loadAllData = useCallback(async () => {
+    setFuelLoading(true);
+    setExpenseLoading(true);
+    setPageError(null);
+    try {
+      const [fuelRes, expRes] = await Promise.all([
+        getFuelLogs({ search: fuelSearch || undefined }),
+        getExpenses({ search: expenseSearch || undefined, category: categoryFilter || undefined })
+      ]);
+      if (fuelRes.success) setFuelLogs(fuelRes.data);
+      if (expRes.success) setExpenses(expRes.data);
+    } catch (err) {
+      console.error(err);
+      setPageError('Failed to load financial records. Please check your connection.');
+    } finally {
+      setFuelLoading(false);
+      setExpenseLoading(false);
     }
-  }, [activeTab, loadFuelLogs, loadExpenses]);
+  }, [fuelSearch, expenseSearch, categoryFilter]);
+
+  // Trigger parallel load on mount and filter changes
+  useEffect(() => {
+    loadAllData();
+  }, [loadAllData]);
 
   // Form submit - Fuel
   const handleFuelFormSubmit = async (data: FuelFormData) => {
@@ -422,6 +446,10 @@ export default function FuelExpensesPage() {
     });
   };
 
+  if (pageError) {
+    return <ErrorState fullPage message={pageError} onRetry={loadAllData} />;
+  }
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto text-left">
       {/* Title section */}
@@ -698,7 +726,7 @@ export default function FuelExpensesPage() {
                     contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                     itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
                     labelStyle={{ color: '#64748b', marginBottom: '4px' }}
-                    formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Cost']}
+                    formatter={(value: any) => [`₹${Number(value).toLocaleString()}`, 'Cost']}
                   />
                   <Area type="monotone" dataKey="cost" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#fuelColorValue)" activeDot={{ r: 6, fill: '#6366f1', stroke: '#fff', strokeWidth: 2 }} />
                 </AreaChart>

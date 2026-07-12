@@ -15,6 +15,7 @@ import type { AnalyticsReport } from '../services/analytics.api';
 import DataTable from '../components/tables/DataTable';
 import type { Column } from '../components/tables/DataTable';
 import Loader from '../components/common/Loader';
+import ErrorState from '../components/common/ErrorState';
 import { useAuth } from '../context/AuthContext';
 import { exportToPdf } from '../utils/pdfExport';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
@@ -23,26 +24,34 @@ export default function AnalyticsPage() {
   const { userRole } = useAuth();
   const [data, setData] = useState<AnalyticsReport | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await getAnalyticsReport();
+      if (response.success) {
+        setData(response.data);
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Failed to generate analytics report. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function loadData() {
-      setLoading(true);
-      try {
-        const response = await getAnalyticsReport();
-        if (response.success) {
-          setData(response.data);
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
     loadData();
   }, []);
 
+  if (error) {
+    return <ErrorState fullPage message={error} onRetry={loadData} />;
+  }
+
   if (loading || !data) {
-    return <Loader message="Analyzing fleet performance metrics..." />;
+    return <Loader fullPage message="Analyzing fleet performance metrics..." />;
   }
 
   // Top KPIs mapping
@@ -134,9 +143,6 @@ export default function AnalyticsPage() {
       ),
     },
   ];
-
-  // Calculate maximum monthly cost to scale the bars relatively
-  const maxMonthCost = Math.max(...data.monthly_costs.map(m => m.spend)) || 1;
 
   const handleExportPDF = () => {
     if (!data) return;
@@ -248,7 +254,7 @@ export default function AnalyticsPage() {
                     contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                     itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
                     labelStyle={{ color: '#64748b', marginBottom: '4px' }}
-                    formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Spend']}
+                    formatter={(value: any) => [`₹${Number(value).toLocaleString()}`, 'Cost']}
                   />
                   <Area 
                     type="monotone" 

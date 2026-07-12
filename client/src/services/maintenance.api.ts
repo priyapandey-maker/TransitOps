@@ -2,7 +2,7 @@ import apiClient, { handleApiError } from './api';
 import type { ApiResponse } from '../types/api.types';
 import type { Maintenance, MaintenanceFormData } from '../types/maintenance.types';
 
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 // Reusable mock database in memory
 let mockMaintenances: Maintenance[] = [

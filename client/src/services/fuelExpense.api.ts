@@ -3,7 +3,7 @@ import type { ApiResponse } from '../types/api.types';
 import type { FuelLog, FuelFormData } from '../types/fuel.types';
 import type { Expense, ExpenseFormData } from '../types/expense.types';
 
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 // Reusable mock database in memory
 let mockFuelLogs: FuelLog[] = [

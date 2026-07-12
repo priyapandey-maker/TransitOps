@@ -25,6 +25,7 @@ import DriverForm from '../components/forms/DriverForm';
 import { useAuth } from '../context/AuthContext';
 import ActionMenu from '../components/tables/ActionMenu';
 import type { ActionMenuItem } from '../components/tables/ActionMenu';
+import ErrorState from '../components/common/ErrorState';
 
 export default function DriversPage() {
   const { userRole } = useAuth();
@@ -36,6 +37,7 @@ export default function DriversPage() {
   // State Management
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [classFilter, setClassFilter] = useState('');
@@ -61,6 +63,7 @@ export default function DriversPage() {
   // Load drivers from API
   const loadDrivers = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const response = await getDrivers({
         search: search || undefined,
@@ -71,6 +74,7 @@ export default function DriversPage() {
       }
     } catch (err: unknown) {
       console.error(err);
+      setError('Failed to load drivers directory. Please check your connection.');
     } finally {
       setLoading(false);
     }
@@ -347,6 +351,10 @@ export default function DriversPage() {
       rows,
     });
   };
+
+  if (error) {
+    return <ErrorState fullPage message={error} onRetry={loadDrivers} />;
+  }
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto text-left">
