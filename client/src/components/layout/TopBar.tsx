@@ -14,7 +14,7 @@ interface TopBarProps {
 
 export default function TopBar({ onMenuClick }: TopBarProps) {
   const { theme, toggleTheme } = useTheme();
-  const { user, logout } = useAuth();
+  const { currentUser, userRole, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-30 h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
@@ -67,10 +67,10 @@ export default function TopBar({ onMenuClick }: TopBarProps) {
             </div>
             <div className="hidden md:block">
               <p className="text-sm font-medium leading-tight">
-                {user?.fullName ?? 'Guest'}
+                {currentUser?.fullName ?? 'Guest'}
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400 leading-tight">
-                {user?.role ?? 'Not logged in'}
+                {userRole ?? 'Not logged in'}
               </p>
             </div>
           </div>
