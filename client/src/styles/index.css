@@ -120,6 +120,11 @@ textarea {
   transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
+input[type="text"].search-input {
+  padding-left: 2.5rem !important;
+  padding-right: 4rem !important;
+}
+
 .dark input[type="text"],
 .dark input[type="number"],
 .dark input[type="password"],

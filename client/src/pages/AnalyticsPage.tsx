@@ -17,6 +17,7 @@ import type { Column } from '../components/tables/DataTable';
 import Loader from '../components/common/Loader';
 import { useAuth } from '../context/AuthContext';
 import { exportToPdf } from '../utils/pdfExport';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 export default function AnalyticsPage() {
   const { userRole } = useAuth();
@@ -218,27 +219,48 @@ export default function AnalyticsPage() {
               Monthly Operational Cost Trend (2026)
             </h3>
             
-            {/* Vertical Bar Chart */}
-            <div className="h-64 flex items-end justify-between gap-4 px-4 border-b border-slate-100 dark:border-slate-800 pb-1">
-              {data.monthly_costs.map((mc) => {
-                const heightPercent = Math.round((mc.spend / maxMonthCost) * 100);
-                return (
-                  <div key={mc.month} className="flex-1 flex flex-col items-center gap-2 group relative">
-                    {/* Tooltip on hover */}
-                    <div className="absolute bottom-full mb-2 bg-slate-900 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
-                      ₹{mc.spend.toLocaleString()}
-                    </div>
-                    {/* Column Bar */}
-                    <div
-                      className="w-full rounded-t bg-slate-100 dark:bg-slate-950 border border-slate-200/50 dark:border-slate-800 group-hover:bg-primary-500 group-hover:border-primary-600 transition-saas"
-                      style={{ height: `${heightPercent}%`, minHeight: '8px' }}
-                    />
-                    <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 whitespace-nowrap select-none mt-1">
-                      {mc.month.split(' ')[0]}
-                    </span>
-                  </div>
-                );
-              })}
+            {/* Recharts Area Chart */}
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={data.monthly_costs} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="analyticsColorValue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#94a3b8" opacity={0.2} />
+                  <XAxis 
+                    dataKey="month" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 12, fill: '#64748b' }} 
+                    dy={10} 
+                    tickFormatter={(val) => val.split(' ')[0]} 
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 12, fill: '#64748b' }} 
+                    tickFormatter={(val) => val >= 1000 ? `${(val/1000).toFixed(0)}k` : val} 
+                  />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                    itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
+                    labelStyle={{ color: '#64748b', marginBottom: '4px' }}
+                    formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Spend']}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="spend" 
+                    stroke="#6366f1" 
+                    strokeWidth={3} 
+                    fillOpacity={1} 
+                    fill="url(#analyticsColorValue)" 
+                    activeDot={{ r: 6, fill: '#6366f1', stroke: '#fff', strokeWidth: 2 }} 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </div>
 

@@ -24,6 +24,7 @@ import type { Expense, ExpenseFormData } from '../types/expense.types';
 import { exportToPdf } from '../utils/pdfExport';
 import DataTable from '../components/tables/DataTable';
 import type { Column } from '../components/tables/DataTable';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import SearchBar from '../components/common/SearchBar';
 import Pagination from '../components/common/Pagination';
 import Modal from '../components/ui/Modal';
@@ -666,43 +667,42 @@ export default function FuelExpensesPage() {
             </div>
           </div>
 
-          {/* Monthly trend progress bars */}
+          {/* Monthly trend Recharts AreaChart */}
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-cards shadow-sm">
             <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-5">
               <Activity size={16} className="text-primary-500" />
               Monthly Cost Trend (2026)
             </h3>
             
-            <div className="space-y-4 text-xs font-semibold">
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-500 dark:text-slate-400">May 2026</span>
-                  <span className="text-slate-900 dark:text-slate-100 font-mono">₹14,500</span>
-                </div>
-                <div className="h-2 rounded-full bg-slate-50 dark:bg-slate-950 overflow-hidden border border-slate-100 dark:border-slate-800">
-                  <div className="h-full rounded-full bg-primary-500" style={{ width: '45%' }} />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-500 dark:text-slate-400">June 2026</span>
-                  <span className="text-slate-900 dark:text-slate-100 font-mono">₹21,800</span>
-                </div>
-                <div className="h-2 rounded-full bg-slate-50 dark:bg-slate-950 overflow-hidden border border-slate-100 dark:border-slate-800">
-                  <div className="h-full rounded-full bg-primary-500" style={{ width: '68%' }} />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-500 dark:text-slate-400">July 2026 (Current)</span>
-                  <span className="text-slate-900 dark:text-slate-100 font-mono">₹{totalExpenseCost.toLocaleString()}</span>
-                </div>
-                <div className="h-2 rounded-full bg-slate-50 dark:bg-slate-950 overflow-hidden border border-slate-100 dark:border-slate-800">
-                  <div className="h-full rounded-full bg-primary-600 animate-pulse" style={{ width: '90%' }} />
-                </div>
-              </div>
+            <div className="h-48 w-full -ml-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart 
+                  data={[
+                    { month: 'May', cost: 14500 },
+                    { month: 'Jun', cost: 21800 },
+                    { month: 'Jul', cost: totalExpenseCost }
+                  ]}
+                  margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="fuelColorValue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#94a3b8" opacity={0.2} />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} 
+                         tickFormatter={(val) => val >= 1000 ? `${(val/1000).toFixed(0)}k` : val} />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                    itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
+                    labelStyle={{ color: '#64748b', marginBottom: '4px' }}
+                    formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Cost']}
+                  />
+                  <Area type="monotone" dataKey="cost" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#fuelColorValue)" activeDot={{ r: 6, fill: '#6366f1', stroke: '#fff', strokeWidth: 2 }} />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>

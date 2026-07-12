@@ -53,11 +53,13 @@ export function MetricCard({ label, value, subtitle, icon: Icon, iconColor, tren
  * 2. ChartCard — Placeholder for chart content
  * ───────────────────────────────────────────────────── */
 
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+
 export interface ChartCardProps {
   title: string;
   icon?: LucideIcon;
-  /** Chart bars rendered as simple horizontal progress bars */
-  data: { label: string; value: number; max: number; color: string }[];
+  /** Chart data */
+  data: { label: string; value: number; max?: number; color?: string }[];
 }
 
 export function ChartCard({ title, icon: Icon, data }: ChartCardProps) {
@@ -67,21 +69,27 @@ export function ChartCard({ title, icon: Icon, data }: ChartCardProps) {
         {Icon && <Icon size={18} className="text-primary-500" />}
         {title}
       </h3>
-      <div className="space-y-4">
-        {data.map((row) => (
-          <div key={row.label}>
-            <div className="flex items-center justify-between text-xs mb-1.5">
-              <span className="font-medium text-slate-600 dark:text-slate-400">{row.label}</span>
-              <span className="font-semibold text-slate-900 dark:text-white">{row.value}</span>
-            </div>
-            <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ease-out ${row.color}`}
-                style={{ width: `${Math.min((row.value / row.max) * 100, 100)}%` }}
-              />
-            </div>
-          </div>
-        ))}
+      <div className="h-64 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <defs>
+              <linearGradient id={`colorValue-${title.replace(/\s+/g, '')}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#94a3b8" opacity={0.2} />
+            <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
+            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} 
+                   tickFormatter={(val) => val >= 1000 ? `${(val/1000).toFixed(0)}k` : val} />
+            <Tooltip 
+              contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+              itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
+              labelStyle={{ color: '#64748b', marginBottom: '4px' }}
+            />
+            <Area type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill={`url(#colorValue-${title.replace(/\s+/g, '')})`} activeDot={{ r: 6, fill: '#6366f1', stroke: '#fff', strokeWidth: 2 }} />
+          </AreaChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

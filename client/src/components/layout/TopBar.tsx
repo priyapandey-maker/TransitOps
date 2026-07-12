@@ -4,7 +4,9 @@
  * Consistent across every authenticated page.
  */
 
-import { Menu, Search, Moon, Sun, LogOut, User } from 'lucide-react';
+import { useState } from 'react';
+import { Menu, Moon, Sun, LogOut, User } from 'lucide-react';
+import SearchBar from '../common/SearchBar';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 
@@ -13,6 +15,7 @@ interface TopBarProps {
 }
 
 export default function TopBar({ onMenuClick }: TopBarProps) {
+  const [searchQuery, setSearchQuery] = useState('');
   const { theme, toggleTheme } = useTheme();
   const { currentUser, userRole, logout } = useAuth();
 
@@ -31,25 +34,11 @@ export default function TopBar({ onMenuClick }: TopBarProps) {
 
           {/* Search bar */}
           <div className="hidden sm:flex items-center flex-1 max-w-sm group">
-            <div className="relative w-full">
-              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 transition-colors group-focus-within:text-primary-500" />
-              <input
-                type="text"
-                placeholder="Quick search... (⌘K)"
-                className="
-                  w-full pl-9 pr-12 py-1.5 text-xs rounded-full
-                  bg-slate-50 dark:bg-slate-900
-                  text-slate-900 dark:text-slate-100
-                  placeholder-slate-400 dark:placeholder-slate-500
-                  border border-slate-200/60 dark:border-slate-800
-                  focus:border-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-500/10
-                  transition-saas
-                "
-              />
-              <span className="absolute right-3.5 top-1/2 -translate-y-1/2 inline-flex items-center gap-0.5 px-1 py-0.5 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 text-[9px] font-mono text-slate-400 select-none">
-                <span>/</span>
-              </span>
-            </div>
+            <SearchBar 
+              value={searchQuery} 
+              onChange={setSearchQuery} 
+              placeholder="Quick search..." 
+            />
           </div>
         </div>
 

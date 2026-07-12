@@ -45,11 +45,12 @@ export default function SearchBar({
         onChange={(e) => setLocalValue(e.target.value)}
         placeholder={placeholder}
         className="
-          w-full h-11 pl-11 pr-16 text-sm rounded-lg
+          search-input
+          w-full h-11 text-sm rounded-xl
           bg-white dark:bg-slate-900
           text-slate-900 dark:text-slate-100
-          placeholder-slate-405 dark:placeholder-slate-500
-          border border-slate-205 dark:border-slate-805
+          placeholder-slate-400 dark:placeholder-slate-500
+          border border-slate-200 dark:border-slate-800
           focus:border-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-500/10
           transition-all duration-150
         "

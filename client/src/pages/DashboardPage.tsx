@@ -109,6 +109,9 @@ function AdminDashboard() {
             statusColumn="status"
             statusColors={adminTripStatusColors}
           />
+          <ChartCard title="Active Trip Corridors" icon={Route} data={adminActiveTripsChart} />
+          <ChartCard title="Overall Trip Completions" icon={BarChart3} data={adminTripCompletionChart} />
+          <TimelineCard title="Command Logs" events={adminTimeline} />
         </div>
 
         {/* Right 1/3 */}
@@ -116,9 +119,6 @@ function AdminDashboard() {
           <QuickActionsCard title="Quick Dispatch Controls" actions={adminQuickActions} />
           <ChartCard title="Fleet Availability" icon={Truck} data={adminFleetChart} />
           <ChartCard title="Fleet Health Index" icon={BarChart3} data={adminFleetHealthChart} />
-          <ChartCard title="Active Trip Corridors" icon={Route} data={adminActiveTripsChart} />
-          <ChartCard title="Overall Trip Completions" icon={BarChart3} data={adminTripCompletionChart} />
-          <TimelineCard title="Command Logs" events={adminTimeline} />
         </div>
       </div>
     </>
@@ -152,14 +152,14 @@ function FleetManagerDashboard() {
             statusColumn="health"
             statusColors={fleetAttentionStatusColors}
           />
+          <ChartCard title="Fleet Health Status" icon={BarChart3} data={fleetHealthChart} />
+          <ChartCard title="Upcoming Service Status" icon={Truck} data={fleetStatusChart} />
         </div>
 
         <div className="space-y-8">
           <QuickActionsCard title="Fleet Quick Actions" actions={fleetQuickActions} />
           <ChartCard title="Vehicle Class Utilization" icon={Truck} data={fleetUtilizationChart} />
           <ChartCard title="Maintenance Job Trends" icon={Wrench} data={fleetMaintenanceTrendsChart} />
-          <ChartCard title="Fleet Health Status" icon={BarChart3} data={fleetHealthChart} />
-          <ChartCard title="Upcoming Service Status" icon={Truck} data={fleetStatusChart} />
         </div>
       </div>
     </>
@@ -187,6 +187,8 @@ function DispatcherDashboard() {
             statusColumn="status"
             statusColors={dispatchTripStatusColors}
           />
+          <ChartCard title="ETA Delay Performance" icon={Clock} data={dispatchETAChart} />
+          <ChartCard title="Delayed Route Segments" icon={Route} data={dispatchRouteChart} />
           <TimelineCard title="Dispatch Activity Log" events={dispatcherTimeline} />
         </div>
 
@@ -194,8 +196,6 @@ function DispatcherDashboard() {
           <QuickActionsCard title="Dispatch Quick Actions" actions={dispatcherQuickActions} />
           <ChartCard title="Live Dispatch Status" icon={Route} data={dispatchLiveQueueChart} />
           <ChartCard title="Trip Completion Rates" icon={BarChart3} data={dispatchTripCompletionChart} />
-          <ChartCard title="ETA Delay Performance" icon={Clock} data={dispatchETAChart} />
-          <ChartCard title="Delayed Route Segments" icon={Route} data={dispatchRouteChart} />
         </div>
       </div>
     </>
@@ -220,14 +220,14 @@ function FinancialAnalystDashboard() {
             columns={financeExpenseColumns}
             rows={financeExpenseRows}
           />
+          <ChartCard title="Capital Asset ROI Index" icon={BarChart3} data={financeROIChart} />
+          <ChartCard title="Monthly Expense Breakdown" icon={BarChart3} data={financeExpenseBreakdown} />
         </div>
 
         <div className="space-y-8">
           <QuickActionsCard title="Finance Quick Actions" actions={financeQuickActions} />
           <ChartCard title="Quarterly Fuel Spend" icon={Fuel} data={financeFuelSpendChart} />
           <ChartCard title="Monthly Operational Costs" icon={BarChart3} data={financeMonthlyCostTrend} />
-          <ChartCard title="Capital Asset ROI Index" icon={BarChart3} data={financeROIChart} />
-          <ChartCard title="Monthly Expense Breakdown" icon={BarChart3} data={financeExpenseBreakdown} />
         </div>
       </div>
     </>
