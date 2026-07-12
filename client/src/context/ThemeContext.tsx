@@ -6,6 +6,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
+import { STORAGE_KEYS } from '../constants/storage';
 
 type Theme = 'light' | 'dark';
 
@@ -16,12 +17,10 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-const STORAGE_KEY = 'transitops-theme';
-
 function getInitialTheme(): Theme {
   if (typeof window === 'undefined') return 'light';
 
-  const stored = localStorage.getItem(STORAGE_KEY);
+  const stored = localStorage.getItem(STORAGE_KEYS.THEME);
   if (stored === 'dark' || stored === 'light') return stored;
 
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -37,8 +36,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem(STORAGE_KEY, theme);
+    localStorage.setItem(STORAGE_KEYS.THEME, theme);
   }, [theme]);
+
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));

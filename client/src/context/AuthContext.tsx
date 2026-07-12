@@ -1,21 +1,12 @@
-/**
- * AuthContext placeholder — will be fully implemented in Sprint 1.
- * Provides user, token, login/logout, and role-based access.
- */
-
 import { createContext, useContext, useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { Role } from '../types/common.types';
-
-export interface AuthUser {
-  userId: number;
-  fullName: string;
-  email: string;
-  role: Role;
-}
+import type { AuthUser } from '../types/auth.types';
+import { STORAGE_KEYS } from '../constants/storage';
 
 interface AuthContextValue {
-  user: AuthUser | null;
+  currentUser: AuthUser | null;
+  userRole: Role | null;
   token: string | null;
   isAuthenticated: boolean;
   login: (token: string, user: AuthUser) => void;
@@ -24,14 +15,11 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-const TOKEN_KEY = 'transitops-token';
-const USER_KEY = 'transitops-user';
-
 function getStoredAuth(): { token: string | null; user: AuthUser | null } {
   if (typeof window === 'undefined') return { token: null, user: null };
 
-  const token = localStorage.getItem(TOKEN_KEY);
-  const userJson = localStorage.getItem(USER_KEY);
+  const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+  const userJson = localStorage.getItem(STORAGE_KEYS.USER);
 
   if (token && userJson) {
     try {
@@ -49,21 +37,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [auth, setAuth] = useState(getStoredAuth);
 
   const login = useCallback((token: string, user: AuthUser) => {
-    localStorage.setItem(TOKEN_KEY, token);
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
     setAuth({ token, user });
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(STORAGE_KEYS.TOKEN);
+    localStorage.removeItem(STORAGE_KEYS.USER);
     setAuth({ token: null, user: null });
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        user: auth.user,
+        currentUser: auth.user,
+        userRole: auth.user?.role ?? null,
         token: auth.token,
         isAuthenticated: !!auth.token,
         login,
