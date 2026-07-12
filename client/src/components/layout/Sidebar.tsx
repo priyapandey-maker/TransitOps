@@ -1,6 +1,6 @@
 /**
  * Sidebar — Fixed left navigation panel.
- * Matches the official TransitOps mockup exactly.
+ * Role‑aware: displays only the modules relevant to the authenticated user.
  * Desktop: fixed visible | Tablet: collapsible | Mobile: drawer
  */
 
@@ -17,7 +17,8 @@ import {
   X,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { SIDEBAR_NAV, SIDEBAR_BOTTOM_NAV, APP_NAME, APP_DESCRIPTION } from '../../constants/navigation';
+import { ROLE_NAV, SIDEBAR_BOTTOM_NAV, APP_NAME, APP_DESCRIPTION } from '../../constants/navigation';
+import { useAuth } from '../../context/AuthContext';
 
 const ICON_MAP: Record<string, LucideIcon> = {
   LayoutDashboard,
@@ -37,6 +38,10 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
+  const { userRole } = useAuth();
+
+  // Get role-specific navigation items; fall back to Admin if role is unknown
+  const navItems = ROLE_NAV[userRole ?? 'Admin'] ?? ROLE_NAV['Admin'];
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
 
@@ -101,9 +106,18 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </button>
         </div>
 
+        {/* Role badge */}
+        {userRole && (
+          <div className="px-6 pt-4 pb-2">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-primary-500/10 text-primary-400 border border-primary-500/20">
+              {userRole}
+            </span>
+          </div>
+        )}
+
         {/* Main navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
-          {SIDEBAR_NAV.map(renderNavItem)}
+        <nav className="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
+          {navItems.map(renderNavItem)}
         </nav>
 
         {/* Bottom navigation (Settings) */}

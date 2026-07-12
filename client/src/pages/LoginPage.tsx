@@ -7,7 +7,7 @@ import { useTheme } from '../context/ThemeContext';
 import { login as loginService } from '../services/auth.api';
 import { loginSchema } from '../types/auth.types';
 import type { LoginCredentials } from '../types/auth.types';
-import { LogIn, Moon, Sun, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { LogIn, Moon, Sun, Eye, EyeOff, Loader2, Truck, Route, Wrench, Users } from 'lucide-react';
 import { APP_NAME } from '../constants/navigation';
 
 export default function LoginPage() {
@@ -71,66 +71,123 @@ export default function LoginPage() {
         {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
       </button>
 
-      {/* Left panel: Branding & Fleet operations overview */}
-      <div className="hidden lg:flex lg:w-1/2 bg-slate-900 text-white p-16 flex-col justify-between relative overflow-hidden border-r border-slate-800 antialiased">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(91,92,235,0.08),transparent_50%)]" />
+      {/* Left panel: Enterprise Logistics control room details */}
+      <div className="hidden lg:flex lg:w-1/2 bg-slate-950 text-white p-16 flex-col justify-between relative overflow-hidden border-r border-slate-900 antialiased select-none">
+        {/* Abstract Dispatch Topology Background */}
+        <svg className="absolute inset-0 w-full h-full object-cover opacity-[0.03] pointer-events-none text-primary-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none" stroke="currentColor" strokeWidth="1">
+          <circle cx="150" cy="120" r="3" fill="currentColor"/>
+          <circle cx="380" cy="220" r="3" fill="currentColor"/>
+          <circle cx="580" cy="120" r="3" fill="currentColor"/>
+          <circle cx="280" cy="380" r="3" fill="currentColor"/>
+          <circle cx="480" cy="420" r="3" fill="currentColor"/>
+          <circle cx="680" cy="320" r="3" fill="currentColor"/>
+          <line x1="150" y1="120" x2="380" y2="220" />
+          <line x1="380" y1="220" x2="580" y2="120" />
+          <line x1="150" y1="120" x2="280" y2="380" />
+          <line x1="280" y1="380" x2="480" y2="420" />
+          <line x1="380" y1="220" x2="480" y2="420" />
+          <line x1="580" y1="120" x2="480" y2="420" />
+          <line x1="580" y1="120" x2="680" y2="320" />
+          <line x1="480" y1="420" x2="680" y2="320" />
+          <path d="M50 80 Q 250 30 450 80 T 750 80" fill="none" strokeDasharray="3 3" />
+          <path d="M100 450 Q 300 400 500 450 T 700 450" fill="none" strokeDasharray="3 3" />
+        </svg>
+
         <div className="relative flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-primary-500 animate-pulse" />
-          <span className="text-sm font-semibold tracking-wide uppercase text-slate-400">{APP_NAME} Control</span>
+          <span className="text-xs font-semibold tracking-widest uppercase text-slate-400">{APP_NAME} Control Room</span>
         </div>
 
-        <div className="relative max-w-xl my-auto space-y-10">
-          <div className="space-y-6">
-            <h1 className="text-[36px] md:text-[48px] lg:text-[64px] font-extrabold tracking-[-0.04em] leading-[1.05] text-white">
+        <div className="relative max-w-xl my-auto space-y-12">
+          <div className="space-y-4">
+            <h1 className="text-[32px] md:text-[44px] lg:text-[54px] font-extrabold tracking-[-0.04em] leading-[1.05] text-white">
               Fleet Operations & Dispatch Control.
             </h1>
-            <p className="text-[22px] font-normal leading-[1.7] text-white/70">
-              Supervise assets, schedule preventive maintenance, optimize trip dispatch logs, and monitor workforce compliance in real-time.
+            <p className="text-base font-normal leading-[1.6] text-slate-400">
+              Supervise assets, schedule preventive maintenance, optimize trip dispatch logs, and monitor compliance across your logistics operations.
             </p>
           </div>
 
-          <div className="space-y-4 border-l-2 border-primary-500 pl-6">
-            <div className="space-y-3 text-lg font-medium text-slate-300">
-              <p className="font-semibold text-white">Active Operational Supervision</p>
-              <ul className="space-y-2.5">
-                <li className="flex items-center gap-2 text-slate-400">
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary-500 flex-shrink-0" />
-                  <span>Real-time capacity and load calculations</span>
-                </li>
-                <li className="flex items-center gap-2 text-slate-400">
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary-500 flex-shrink-0" />
-                  <span>Preventive lifecycle maintenance scheduling</span>
-                </li>
-                <li className="flex items-center gap-2 text-slate-400">
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary-500 flex-shrink-0" />
-                  <span>Role-based access control registries</span>
-                </li>
-              </ul>
+          {/* Capability Blocks */}
+          <div className="space-y-6">
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded bg-slate-900 border border-slate-800 text-slate-400">
+                <Truck size={16} />
+              </div>
+              <div className="text-left">
+                <h4 className="text-sm font-semibold text-white">Live Fleet Visibility</h4>
+                <p className="text-xs text-slate-400 mt-1">Real-time coordinate maps and asset health telemetry updates.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded bg-slate-900 border border-slate-800 text-slate-400">
+                <Route size={16} />
+              </div>
+              <div className="text-left">
+                <h4 className="text-sm font-semibold text-white">Intelligent Dispatch</h4>
+                <p className="text-xs text-slate-400 mt-1">Capacity checks and cargo loading optimization protocols.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded bg-slate-900 border border-slate-800 text-slate-400">
+                <Wrench size={16} />
+              </div>
+              <div className="text-left">
+                <h4 className="text-sm font-semibold text-white">Preventive Maintenance</h4>
+                <p className="text-xs text-slate-400 mt-1">Automated workshop ticket scheduling and log registries.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded bg-slate-900 border border-slate-800 text-slate-400">
+                <Users size={16} />
+              </div>
+              <div className="text-left">
+                <h4 className="text-sm font-semibold text-white">Driver Compliance</h4>
+                <p className="text-xs text-slate-400 mt-1">Role matrix compliance registers and driving shift tracking.</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="relative text-xs text-slate-500">
-          © {new Date().getFullYear()} TransitOps Inc. All rights reserved.
+        {/* Infrastructure Status */}
+        <div className="relative border-t border-slate-900 pt-6 space-y-3">
+          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest text-left">System Status</p>
+          <div className="flex items-center gap-6 text-[11px] text-slate-400">
+            <span className="flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+              <span>Fleet Services Online</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+              <span>Dispatch Engine Active</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+              <span>Database Connected</span>
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Right panel: Login form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12">
-        <div className="w-full max-w-sm">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-16">
+        <div className="w-full max-w-sm space-y-8">
           {/* Brand/Company header on mobile */}
-          <div className="text-left mb-8">
+          <div className="text-left">
             <div className="lg:hidden flex items-center gap-2 mb-4">
               <span className="h-2 w-2 rounded-full bg-primary-500" />
               <span className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">{APP_NAME}</span>
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Sign in to Control Room</h2>
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1.5">Enter credentials below to access logistics supervision panels.</p>
+            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Sign in to Command</h2>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">Enter credentials below to access logistics supervision panels.</p>
           </div>
 
           {/* Login Form Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-cards border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+          <div className="bg-white dark:bg-slate-900 rounded-cards border border-slate-200 dark:border-slate-800 p-8 sm:p-10 shadow-sm space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
               {/* Global API error display */}
               {apiError && (
                 <div className="p-3 text-xs text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-950/20 rounded-lg border border-red-100 dark:border-red-900/30">
@@ -139,8 +196,8 @@ export default function LoginPage() {
               )}
 
               {/* Email input field */}
-              <div>
-                <label htmlFor="email" className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+              <div className="space-y-1.5 text-left">
+                <label htmlFor="email" className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   Email Address
                 </label>
                 <input
@@ -159,18 +216,18 @@ export default function LoginPage() {
                   disabled={loading}
                 />
                 {errors.email && (
-                  <p className="text-xs text-red-500 mt-1.5">{errors.email.message}</p>
+                  <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
                 )}
               </div>
 
               {/* Password input field */}
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
+              <div className="space-y-1.5 text-left">
+                <div className="flex items-center justify-between">
                   <label htmlFor="password" className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                     Password
                   </label>
-                  <a href="#forgot" className="text-xs text-primary-500 hover:text-primary-600 transition-colors font-medium">
-                    Forgot?
+                  <a href="#forgot" className="text-xs text-primary-500 hover:text-primary-600 transition-colors font-semibold">
+                    Forgot Password?
                   </a>
                 </div>
                 <div className="relative">
@@ -200,13 +257,13 @@ export default function LoginPage() {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-xs text-red-500 mt-1.5">{errors.password.message}</p>
+                  <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>
                 )}
               </div>
 
               {/* Role select field */}
-              <div>
-                <label htmlFor="role" className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+              <div className="space-y-1.5 text-left">
+                <label htmlFor="role" className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   Access Role
                 </label>
                 <select
@@ -266,7 +323,7 @@ export default function LoginPage() {
           </div>
 
           {/* Credentials guide */}
-          <div className="mt-6 p-4 rounded-xl border border-slate-200/40 dark:border-slate-800 bg-white/40 dark:bg-slate-900/40 text-center">
+          <div className="p-4 rounded-xl border border-slate-200/40 dark:border-slate-800 bg-white/40 dark:bg-slate-900/40 text-center">
             <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-normal">
               Demo: <span className="font-semibold text-slate-600 dark:text-slate-300">admin@transitops.com</span> / <span className="font-semibold text-slate-600 dark:text-slate-300">admin123</span>
             </p>
