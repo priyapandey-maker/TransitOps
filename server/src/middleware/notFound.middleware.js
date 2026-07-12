@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.notFoundHandler = void 0;
+const express_1 = require("express");
+const response_1 = require("../utils/response");
+const notFoundHandler = (req, res, next) => {
+    return (0, response_1.sendError)(res, 404, `Route ${req.method} ${req.originalUrl} not found`);
+};
+exports.notFoundHandler = notFoundHandler;
+//# sourceMappingURL=notFound.middleware.js.map
