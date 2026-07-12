@@ -2733,4 +2733,1056 @@ This becomes the **single source of truth** for both you and Priya. If a feature
 
 Given your emphasis on engineering quality and avoiding integration surprises, I believe this phase will provide one of the highest returns on investment before implementation begins.
 ---
+Excellent. This is the phase that many hackathon teams skip—and then spend hours fixing integration bugs.
 
+For **TransitOps**, this phase becomes our **engineering contract**.
+
+After this phase:
+
+* Priya should know exactly which API to call.
+* You should know exactly which SQL tables are involved.
+* Every feature must exist in **Database → Backend → Frontend**.
+* Nothing extra gets built.
+* Nothing important gets forgotten.
+
+---
+
+# Phase 6 – Feature Contract (Project Contract v1.0)
+
+## Contract Rules (Locked)
+
+Every feature must satisfy all of these:
+
+```
+Database
+     ↓
+Repository
+     ↓
+Service
+     ↓
+Controller
+     ↓
+Route
+     ↓
+API
+     ↓
+Frontend Service
+     ↓
+React Page
+     ↓
+UI Component
+```
+
+If one layer is missing, the feature is considered **incomplete**.
+
+---
+
+# Module 1 — Authentication
+
+## Database
+
+| Table |
+| ----- |
+| users |
+| roles |
+
+---
+
+## Backend
+
+### APIs
+
+```
+POST /api/auth/login
+
+GET /api/auth/profile
+```
+
+---
+
+### Business Rules
+
+* Email must exist
+* Password verified using bcrypt
+* User must be Active
+* JWT generated
+* Role included
+
+---
+
+### Middleware
+
+* JWT Authentication
+
+---
+
+### Frontend
+
+Pages
+
+```
+Login
+```
+
+Components
+
+* Login Form
+
+Context
+
+* Auth Context
+
+Services
+
+```
+auth.api.ts
+```
+
+---
+
+### Roles
+
+All roles
+
+---
+
+# Module 2 — Dashboard
+
+## Database
+
+Reads from
+
+* vehicles
+* drivers
+* trips
+* maintenance_logs
+* fuel_logs
+* expenses
+
+---
+
+## Backend
+
+```
+GET /api/dashboard
+```
+
+Returns
+
+* KPI Cards
+* Recent Trips
+* Vehicle Status
+* Fleet Utilization
+
+---
+
+### Frontend
+
+Dashboard Page
+
+Components
+
+* KPI Cards
+* Recent Trips Table
+* Vehicle Status Chart
+
+---
+
+# Module 3 — Vehicle Management
+
+## Database
+
+```
+vehicles
+```
+
+---
+
+## Backend
+
+```
+GET /api/vehicles
+
+GET /api/vehicles/:id
+
+POST /api/vehicles
+
+PUT /api/vehicles/:id
+
+DELETE /api/vehicles/:id
+```
+
+> **Implementation note:** Instead of a hard delete, the `DELETE` endpoint should **soft deactivate** the vehicle by updating its status (e.g., `Retired` or `Inactive`) to preserve historical trip integrity.
+
+---
+
+### Business Rules
+
+✓ Registration Unique
+
+✓ Capacity > 0
+
+✓ Cannot retire if on active trip
+
+---
+
+### Frontend
+
+Vehicle Page
+
+Components
+
+* Table
+* Vehicle Form
+* Search
+* Filters
+
+---
+
+### Roles
+
+| Role              | Access |
+| ----------------- | ------ |
+| Admin             | Full   |
+| Fleet Manager     | Full   |
+| Dispatcher        | Read   |
+| Safety Officer    | Read   |
+| Financial Analyst | Read   |
+
+---
+
+# Module 4 — Driver Management
+
+## Database
+
+```
+drivers
+```
+
+---
+
+## Backend
+
+```
+GET
+
+POST
+
+PUT
+
+DELETE
+```
+
+(Soft deactivate rather than remove.)
+
+---
+
+### Business Rules
+
+* License Unique
+* License Valid
+* Cannot deactivate while assigned to an active trip
+
+---
+
+### Frontend
+
+Driver Management
+
+Components
+
+* Table
+* Driver Form
+
+---
+
+# Module 5 — Trip Management
+
+## Database
+
+```
+trips
+
+trip_status_history
+
+activity_logs
+```
+
+---
+
+## Backend
+
+```
+GET /api/trips
+
+GET /api/trips/:id
+
+POST /api/trips
+
+PUT /api/trips/:id
+
+POST /api/trips/:id/dispatch
+
+POST /api/trips/:id/complete
+
+POST /api/trips/:id/cancel
+```
+
+---
+
+### Business Rules
+
+Dispatch
+
+✓ Driver Available
+
+✓ Vehicle Available
+
+✓ License Valid
+
+✓ Capacity OK
+
+Complete
+
+✓ Update Trip
+
+✓ Update Driver
+
+✓ Update Vehicle
+
+✓ History
+
+✓ Activity Log
+
+Cancel
+
+✓ Release Driver
+
+✓ Release Vehicle
+
+✓ History
+
+---
+
+### Frontend
+
+Trip Dispatcher
+
+Trip Table
+
+Trip Form
+
+Status Timeline
+
+---
+
+### Roles
+
+| Role          | Access |
+| ------------- | ------ |
+| Admin         | Full   |
+| Dispatcher    | Full   |
+| Fleet Manager | Full   |
+| Others        | Read   |
+
+---
+
+# Module 6 — Maintenance
+
+## Database
+
+```
+maintenance_logs
+```
+
+---
+
+## Backend
+
+```
+GET
+
+POST
+
+PUT
+
+POST /close
+```
+
+---
+
+### Business Rules
+
+Opening
+
+↓
+
+Vehicle
+
+↓
+
+In Shop
+
+Closing
+
+↓
+
+Vehicle
+
+↓
+
+Available
+
+---
+
+### Frontend
+
+Maintenance Page
+
+Service History
+
+Maintenance Form
+
+---
+
+# Module 7 — Fuel
+
+## Database
+
+```
+fuel_logs
+```
+
+---
+
+## Backend
+
+```
+GET
+
+POST
+
+PUT
+```
+
+---
+
+### Business Rules
+
+* Liters > 0
+* Cost > 0
+
+---
+
+### Frontend
+
+Fuel Logs
+
+Fuel Form
+
+---
+
+# Module 8 — Expenses
+
+## Database
+
+```
+expenses
+```
+
+---
+
+## Backend
+
+```
+GET
+
+POST
+
+PUT
+```
+
+---
+
+### Expense Types
+
+Fuel
+
+Maintenance
+
+Toll
+
+Misc
+
+---
+
+### Frontend
+
+Expense Table
+
+Expense Form
+
+---
+
+# Module 9 — Analytics
+
+## Database
+
+Aggregated SQL only.
+
+No dedicated analytics table.
+
+---
+
+## Backend
+
+```
+GET /api/analytics
+```
+
+---
+
+Returns
+
+Fleet Utilization
+
+Cost
+
+Fuel Efficiency
+
+Vehicle ROI
+
+---
+
+### Frontend
+
+Analytics Dashboard
+
+Cards
+
+Charts
+
+---
+
+# Validation Contract
+
+## Frontend
+
+React Hook Form
+
+↓
+
+Zod
+
+---
+
+## Backend
+
+Validation Middleware
+
+↓
+
+Service Validation
+
+Both layers enforce the rules, but the backend is authoritative.
+
+---
+
+# API Response Contract
+
+Every endpoint must return:
+
+```json
+{
+    "success": true,
+    "message": "...",
+    "data": {}
+}
+```
+
+or
+
+```json
+{
+    "success": false,
+    "message": "...",
+    "errors": []
+}
+```
+
+This matches the response helper we locked in Phase 4.
+
+---
+
+# Transaction Contract
+
+These operations must always run inside MySQL transactions:
+
+| Operation         | Tables Affected                                              |
+| ----------------- | ------------------------------------------------------------ |
+| Dispatch Trip     | trips, vehicles, drivers, trip_status_history, activity_logs |
+| Complete Trip     | trips, vehicles, drivers, trip_status_history, activity_logs |
+| Cancel Trip       | trips, vehicles, drivers, trip_status_history, activity_logs |
+| Open Maintenance  | maintenance_logs, vehicles, activity_logs                    |
+| Close Maintenance | maintenance_logs, vehicles, activity_logs                    |
+
+---
+
+# Frontend ↔ Backend ↔ Database Synchronization Matrix
+
+| Feature     | Frontend    | API                | Database                   |
+| ----------- | ----------- | ------------------ | -------------------------- |
+| Login       | Login Page  | `/api/auth/login`  | users, roles               |
+| Dashboard   | Dashboard   | `/api/dashboard`   | Multiple tables            |
+| Vehicles    | Fleet       | `/api/vehicles`    | vehicles                   |
+| Drivers     | Drivers     | `/api/drivers`     | drivers                    |
+| Trips       | Trips       | `/api/trips`       | trips, trip_status_history |
+| Maintenance | Maintenance | `/api/maintenance` | maintenance_logs           |
+| Fuel        | Fuel        | `/api/fuel`        | fuel_logs                  |
+| Expenses    | Expenses    | `/api/expenses`    | expenses                   |
+| Analytics   | Analytics   | `/api/analytics`   | Aggregated SQL             |
+
+This table should become the **primary implementation checklist**. No feature is complete until all three columns are satisfied.
+
+---
+
+# Feature Freeze Checklist
+
+Before moving to implementation, every feature should answer **YES** to these questions:
+
+* ✅ Is there a database table supporting it?
+* ✅ Is there a repository for data access?
+* ✅ Is there a service containing business rules?
+* ✅ Is there a controller exposing the functionality?
+* ✅ Is there a route registered?
+* ✅ Is there frontend API integration?
+* ✅ Is there a React page or reusable component?
+* ✅ Is validation implemented on both frontend and backend?
+* ✅ Are role permissions defined?
+* ✅ Is the feature represented in the official UI?
+
+---
+
+# Phase 6 Deliverables (Completed)
+
+We have now established a **single source of truth** that synchronizes:
+
+* ✅ Database
+* ✅ Backend
+* ✅ Frontend
+* ✅ Business Rules
+* ✅ Validation
+* ✅ RBAC
+* ✅ Transactions
+* ✅ API Contracts
+
+At this stage, the architecture is fully aligned and implementation-ready.
+
+## One Final Recommendation Before Phase 7
+
+Before assigning tasks, I recommend creating a simple **implementation dependency order** rather than letting both developers start randomly. For example:
+
+1. Database schema & seed data
+2. Authentication
+3. Vehicles & Drivers (master data)
+4. Trips (depends on Vehicles & Drivers)
+5. Maintenance
+6. Fuel & Expenses
+7. Dashboard & Analytics
+8. Final integration, QA, and presentation
+
+This dependency-driven roadmap minimizes blockers, keeps both team members productive, and reduces merge conflicts during the limited hackathon time.
+---
+Agreed. This is exactly the refinement I wanted to make before we start assigning work.
+
+Most hackathon teams divide work by **pages** ("you build Vehicles, I'll build Trips"). That often leads to integration problems because the dependencies aren't respected.
+
+For a **2-person team with only 8 hours**, we should divide work by **dependency chain**, not by feature ownership.
+
+---
+
+# Implementation Dependency Roadmap (Final v1.0)
+
+## Guiding Principle
+
+A module should only begin once its dependencies are stable.
+
+Example:
+
+```text
+Trips
+   ▲
+   │
+Vehicles + Drivers
+   ▲
+   │
+Authentication
+   ▲
+   │
+Database
+```
+
+This prevents Priya from waiting on APIs that don't exist yet.
+
+---
+
+# Sprint 0 — Project Foundation
+
+**Estimated Time:** 20–30 minutes
+
+## Objective
+
+Create a stable project foundation so both developers can work independently.
+
+### Shubham
+
+* Initialize backend
+* Configure Express
+* Configure MySQL connection
+* Create folder structure
+* Environment variables
+* Base middleware
+* Git repository structure
+
+### Priya
+
+* Initialize React + Vite + TypeScript
+* Install Tailwind CSS
+* Create folder structure
+* Configure routing
+* Create Dashboard Layout
+* Create Sidebar
+* Create Header
+* Configure theme
+
+### Deliverable
+
+* Project runs
+* Backend starts
+* Frontend starts
+* Git structure ready
+
+---
+
+# Sprint 1 — Database & Authentication
+
+**Estimated Time:** 45–60 minutes
+
+This is the highest-priority backend sprint.
+
+## Shubham
+
+### Database
+
+* Create all 10 tables
+* Foreign keys
+* Constraints
+* Seed Roles
+* Seed Admin User
+
+### Backend
+
+* Login API
+* JWT
+* bcrypt
+* Auth middleware
+* Role middleware
+* Response helper
+
+### Priya
+
+Frontend
+
+* Login Page
+* Authentication Context
+* Protected Routes
+* Dashboard Layout
+
+### Deliverable
+
+Users can:
+
+* Login
+* Access Dashboard
+
+---
+
+# Sprint 2 — Master Data
+
+**Estimated Time:** 60–90 minutes
+
+This unlocks the rest of the project.
+
+## Shubham
+
+Backend
+
+Vehicles CRUD
+
+Drivers CRUD
+
+Validation
+
+Repositories
+
+Services
+
+Controllers
+
+### Priya
+
+Vehicle UI
+
+Driver UI
+
+Forms
+
+Tables
+
+Filters
+
+Search
+
+### Deliverable
+
+Vehicle Management
+
+Driver Management
+
+---
+
+# Sprint 3 — Core Business Logic
+
+**Estimated Time:** 90–120 minutes
+
+The most important sprint.
+
+## Shubham
+
+Trip APIs
+
+Dispatch
+
+Complete
+
+Cancel
+
+Transactions
+
+Status History
+
+Business Rules
+
+Activity Logs
+
+### Priya
+
+Trip Page
+
+Trip Form
+
+Trip Table
+
+Trip Timeline
+
+### Deliverable
+
+Complete Trip Lifecycle
+
+---
+
+# Sprint 4 — Maintenance
+
+**Estimated Time:** 45 minutes
+
+## Shubham
+
+Maintenance APIs
+
+Vehicle Status Updates
+
+Activity Logs
+
+### Priya
+
+Maintenance UI
+
+Maintenance Form
+
+History
+
+### Deliverable
+
+Maintenance Workflow
+
+---
+
+# Sprint 5 — Fuel & Expenses
+
+**Estimated Time:** 45 minutes
+
+## Shubham
+
+Fuel APIs
+
+Expense APIs
+
+### Priya
+
+Fuel Page
+
+Expense Page
+
+Forms
+
+Tables
+
+### Deliverable
+
+Operational Cost Tracking
+
+---
+
+# Sprint 6 — Dashboard & Analytics
+
+**Estimated Time:** 45–60 minutes
+
+Now enough data exists for meaningful dashboards.
+
+## Shubham
+
+Dashboard Aggregation APIs
+
+Analytics Queries
+
+### Priya
+
+KPI Cards
+
+Charts
+
+Dashboard Widgets
+
+Analytics Page
+
+### Deliverable
+
+Management Dashboard
+
+---
+
+# Sprint 7 — Integration & QA
+
+**Estimated Time:** 45–60 minutes
+
+Both developers work together.
+
+Checklist
+
+* API integration
+* Bug fixing
+* Validation testing
+* RBAC testing
+* Responsive testing
+* Light/Dark mode
+* Empty states
+* Error handling
+* Activity logs
+* Demo walkthrough
+
+No new features are added in this sprint.
+
+---
+
+# Sprint 8 — Submission
+
+**Estimated Time:** 30–45 minutes
+
+Finalize:
+
+* README
+* Architecture diagram
+* Database documentation
+* API documentation
+* PPT
+* Demo recording
+* Deployment
+* Final Git review
+
+---
+
+# Parallel Work Strategy
+
+One of the strengths of this roadmap is that Priya is rarely blocked by backend progress.
+
+| Sprint | Shubham               | Priya                 |
+| ------ | --------------------- | --------------------- |
+| 0      | Backend setup         | Frontend setup        |
+| 1      | Database + Auth       | Login + Layout        |
+| 2      | Vehicle & Driver APIs | Vehicle & Driver UI   |
+| 3      | Trip logic            | Trip UI               |
+| 4      | Maintenance APIs      | Maintenance UI        |
+| 5      | Fuel & Expense APIs   | Fuel & Expense UI     |
+| 6      | Dashboard APIs        | Dashboard & Analytics |
+| 7      | Integration & QA      | Integration & QA      |
+| 8      | Submission            | Submission            |
+
+This balance keeps both team members productive throughout the hackathon.
+
+---
+
+# Critical Path
+
+The implementation order is:
+
+```text
+Database
+      │
+      ▼
+Authentication
+      │
+      ▼
+Vehicles + Drivers
+      │
+      ▼
+Trips
+      │
+      ▼
+Maintenance
+      │
+      ▼
+Fuel & Expenses
+      │
+      ▼
+Dashboard
+      │
+      ▼
+Analytics
+      │
+      ▼
+QA
+      │
+      ▼
+Submission
+```
+
+If a sprint slips, we can safely pause lower-priority work (Analytics or Settings) without compromising the core ERP workflow.
+
+---
+
+# Architecture Status
+
+We have now completed and frozen:
+
+* ✅ Phase 0 — Project Understanding
+* ✅ Phase 1 — Business Analysis
+* ✅ Phase 2 — Solution Design
+* ✅ Phase 3 — Database Design
+* ✅ Phase 4 — Backend Architecture
+* ✅ Phase 5 — Frontend Architecture
+* ✅ Phase 6 — Feature Contract
+
+The implementation roadmap is now aligned with all previous phases and is realistic for a two-person team within the hackathon constraints.
+
+**Next Phase:** **Phase 7 – Implementation Roadmap**, where we'll convert this dependency plan into a detailed execution checklist with priorities, milestones, Git workflow, branch strategy, Definition of Done (DoD), and a task-by-task implementation sequence that both team members can follow during the hackathon. This will serve as your operational playbook during the 8-hour event.
+___
