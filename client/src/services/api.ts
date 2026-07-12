@@ -27,6 +27,20 @@ apiClient.interceptors.request.use(
   }
 );
 
+
+// Response interceptor to handle global errors (like 401)
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem(STORAGE_KEYS.TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.USER);
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Helper to format Axios errors consistently according to contract
 export function handleApiError(error: unknown): ApiErrorResponse {
   const axiosError = error as AxiosError<ApiErrorResponse>;
