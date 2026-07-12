@@ -310,14 +310,14 @@ export default function MaintenanceForm({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
+      <div className="flex items-center justify-end gap-3 pt-5 border-t border-slate-150 dark:border-slate-800">
         <button
           type="button"
           onClick={onCancel}
           className="
-            px-4 py-2 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700
-            text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700
-            transition-colors duration-150
+            px-4.5 py-2.5 text-sm font-medium rounded-buttons border border-slate-200 dark:border-slate-800
+            text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800
+            transition-saas btn-press
           "
           disabled={loading}
         >
@@ -326,8 +326,8 @@ export default function MaintenanceForm({
         <button
           type="submit"
           className="
-            px-4 py-2 text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700
-            transition-colors duration-150
+            px-4.5 py-2.5 text-sm font-medium rounded-buttons text-white bg-primary-500 hover:bg-primary-600
+            shadow-sm shadow-primary-500/10 transition-saas btn-press
           "
           disabled={loading}
         >

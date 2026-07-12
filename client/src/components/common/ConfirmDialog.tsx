@@ -27,14 +27,14 @@ export default function ConfirmDialog({
         <p className="text-sm text-slate-600 dark:text-slate-400">
           {message}
         </p>
-        <div className="flex items-center justify-end gap-3">
+        <div className="flex items-center justify-end gap-3 pt-2">
           <button
             type="button"
             onClick={onClose}
             className="
-              px-4 py-2 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700
-              text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700
-              transition-colors duration-150
+              px-4 py-2.5 text-sm font-medium rounded-buttons border border-slate-200 dark:border-slate-800
+              text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800
+              transition-saas btn-press
             "
           >
             {cancelText}
@@ -46,11 +46,11 @@ export default function ConfirmDialog({
               onClose();
             }}
             className={`
-              px-4 py-2 text-sm font-medium rounded-lg text-white transition-colors duration-150
+              px-4 py-2.5 text-sm font-medium rounded-buttons text-white transition-saas btn-press
               ${
                 isDanger
-                  ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
-                  : 'bg-primary-600 hover:bg-primary-700 focus:ring-primary-500'
+                  ? 'bg-red-600 hover:bg-red-700'
+                  : 'bg-primary-500 hover:bg-primary-600'
               }
             `}
           >

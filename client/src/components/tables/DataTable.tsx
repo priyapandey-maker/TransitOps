@@ -27,7 +27,7 @@ export default function DataTable<T extends { id: number | string }>({
 }: DataTableProps<T>) {
   if (loading) {
     return (
-      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-tables overflow-hidden shadow-sm">
         <Loader message="Loading records..." />
       </div>
     );
@@ -40,15 +40,15 @@ export default function DataTable<T extends { id: number | string }>({
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-xl overflow-hidden shadow-sm">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-tables overflow-hidden shadow-sm">
       <div className="w-full overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60">
+            <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/60 backdrop-blur-sm">
               {columns.map((col, idx) => (
                 <th
                   key={idx}
-                  className={`px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 ${
+                  className={`px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 ${
                     col.className || ''
                   }`}
                 >
@@ -56,17 +56,17 @@ export default function DataTable<T extends { id: number | string }>({
                 </th>
               ))}
               {actions && (
-                <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-right">
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-right">
                   Actions
                 </th>
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-slate-800">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
             {data.map((row) => (
               <tr
                 key={row.id}
-                className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors duration-150"
+                className="hover:bg-slate-50/60 dark:hover:bg-slate-800/20 transition-saas group"
               >
                 {columns.map((col, idx) => {
                   const content =
@@ -77,7 +77,7 @@ export default function DataTable<T extends { id: number | string }>({
                   return (
                     <td
                       key={idx}
-                      className={`px-5 py-3.5 text-sm text-slate-700 dark:text-slate-300 ${
+                      className={`px-6 py-4.5 text-sm text-slate-900 dark:text-slate-200 ${
                         col.className || ''
                       }`}
                     >
@@ -86,7 +86,7 @@ export default function DataTable<T extends { id: number | string }>({
                   );
                 })}
                 {actions && (
-                  <td className="px-5 py-3.5 text-sm text-slate-700 dark:text-slate-300 text-right whitespace-nowrap">
+                  <td className="px-6 py-4.5 text-sm text-slate-700 dark:text-slate-300 text-right whitespace-nowrap">
                     {actions(row)}
                   </td>
                 )}

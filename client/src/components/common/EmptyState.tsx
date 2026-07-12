@@ -15,14 +15,14 @@ export default function EmptyState({
   action,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4 text-center border border-dashed border-slate-200 dark:border-slate-700/80 rounded-xl bg-white dark:bg-slate-800/40">
-      <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 mb-4 border border-slate-200 dark:border-slate-700">
+    <div className="flex flex-col items-center justify-center py-20 px-8 text-center border border-dashed border-slate-200 dark:border-slate-800 rounded-cards bg-white dark:bg-slate-900/40">
+      <div className="flex items-center justify-center h-14 w-14 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 mb-5 border border-slate-100 dark:border-slate-700/50">
         {icon || <AlertCircle size={24} />}
       </div>
-      <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+      <h3 className="text-lg font-semibold text-slate-900 dark:text-white tracking-tight">
         {title}
       </h3>
-      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 max-w-sm">
+      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
         {description}
       </p>
       {action && <div className="mt-6">{action}</div>}

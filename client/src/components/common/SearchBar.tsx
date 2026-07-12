@@ -31,10 +31,10 @@ export default function SearchBar({
   }, [localValue, onChange, debounceMs]);
 
   return (
-    <div className="relative flex-1">
+    <div className="relative flex-1 group">
       <Search
         size={16}
-        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500"
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 transition-colors group-focus-within:text-primary-500"
       />
       <input
         type="text"
@@ -42,24 +42,29 @@ export default function SearchBar({
         onChange={(e) => setLocalValue(e.target.value)}
         placeholder={placeholder}
         className="
-          w-full pl-9 pr-10 py-2 text-sm rounded-lg
-          bg-white dark:bg-slate-800
+          w-full pl-11 pr-12 py-2.5 text-sm rounded-full
+          bg-white dark:bg-slate-900
           text-slate-900 dark:text-slate-100
           placeholder-slate-400 dark:placeholder-slate-500
-          border border-slate-200 dark:border-slate-700
-          focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500
-          transition-colors duration-150
+          border border-slate-200 dark:border-slate-800
+          focus:border-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-500/10
+          transition-saas
         "
       />
-      {localValue && (
+      {localValue ? (
         <button
           type="button"
           onClick={() => setLocalValue('')}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors btn-press"
           aria-label="Clear search"
         >
           <X size={14} />
         </button>
+      ) : (
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-[10px] font-mono text-slate-400 dark:text-slate-500 select-none">
+          <span>⌘</span>
+          <span>K</span>
+        </span>
       )}
     </div>
   );
